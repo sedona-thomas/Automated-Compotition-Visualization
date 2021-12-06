@@ -47,6 +47,7 @@ var text = "hello world";
 var trainingNotes = TWINKLE_TWINKLE;
 var sequence_length = 20;
 var note_length = 0.5;
+var states;
 
 var audioCtx;
 var activeOscillators = {};
@@ -108,23 +109,25 @@ lfoOffButton.addEventListener('click', function () { lfo = false; }, false);
 
 function play() {
     //playMarkov();
-    visualize(TWINKLE_TWINKLE);
+    getStates(trainingNotes);
+    visualize(trainingNotes);
 }
 
 // visualize(): visualizes series of notes as they play
 function visualize(notesList) {
-    notes = notesList.notes;
     size = 500;
     canvas = document.getElementById("visualization");
     canvasCtx = canvas.getContext("2d");
-    radialPattern(canvasCtx);
+    radialPattern(canvasCtx, size, notesList);
 }
 
-function radialPattern(canvasCtx) {
-    gradient = canvasCtx.createRadialGradient(size / 2, size / 2, size / 4, size / 2, size / 2, size / 2);
-    interval = 1 / (notes.length + 1);
-    for (i = 0; i < notes.length; i++) {
-        gradient.addColorStop(interval * i, getColor(notes[i].pitch));
+function radialPattern(canvasCtx, size, notesList) {
+    gradient = canvasCtx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    increment = 10;
+    interval = 1 / (notesList.notes.length + 1);
+    let i = 0;
+    for (i = 0; i < notesList.notes.length; i++) {
+        gradient.addColorStop(i * interval, getColor(notesList.notes[i].pitch));
     }
     gradient.addColorStop(1, "white");
     canvasCtx.fillStyle = gradient;
@@ -132,6 +135,7 @@ function radialPattern(canvasCtx) {
 }
 
 function getColor(note) {
+    
     return CSS_COLOR_NAMES[Math.floor(Math.random() * CSS_COLOR_NAMES.length)];
 }
 
@@ -159,13 +163,26 @@ function processText(rawInput) {
     return notes;
 }
 
+function getStates(noteList) {
+    states = {};
+    let pitchSet = [];
+    noteList.notes.forEach(note => {
+        if (!pitchSet.includes(note.pitch)) {
+            pitchSet.push(note.pitch);
+        }
+    });
+    pitchSet.sort();
+    for (i = 0; i < pitchSet.length; i++) {
+        states[pitchSet[i]] = i;
+    }
+}
+
 /*
  * Deals with Markov Chain
  */
 
 var markovChain;
 var markovChain_order1;
-var states;
 var order = 2;
 
 function playMarkov() {
@@ -241,20 +258,6 @@ function makeMarkovChainOrder1(noteList) {
         for (j = 0; j < numOfNotes; j++) {
             markovChain_order1[i][j] = counts[1][i][j] / counts[0][i];
         }
-    }
-}
-
-function getStates(noteList) {
-    states = {};
-    let pitchSet = [];
-    noteList.notes.forEach(note => {
-        if (!pitchSet.includes(note.pitch)) {
-            pitchSet.push(note.pitch);
-        }
-    });
-    pitchSet.sort();
-    for (i = 0; i < pitchSet.length; i++) {
-        states[pitchSet[i]] = i;
     }
 }
 
