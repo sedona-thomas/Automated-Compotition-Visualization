@@ -121,7 +121,6 @@ function visualize(notesList) {
     gradient = canvasCtx.createRadialGradient(size / 2, size / 2, size / 4, size / 2, size / 2, size / 2);
     interval = 1 / (notes.length + 1);
     for (i = 0; i < notes.length; i++) {
-        console.log(i)
         gradient.addColorStop(interval * i, getColor(notes[i].pitch));
     }
     gradient.addColorStop(1, "white");
