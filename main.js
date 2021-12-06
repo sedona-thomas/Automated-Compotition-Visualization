@@ -73,7 +73,7 @@ function automateComposition(notes) {
 }
 
 // processText(): creates notes series from raw text input
-function automateComposition(rawInput) {
+function processText(rawInput) {
     notes = {
         notes: [
             { pitch: 0, startTime: 0.0, endTime: 0.0 }
