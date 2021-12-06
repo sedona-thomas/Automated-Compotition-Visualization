@@ -137,7 +137,7 @@ function processText(rawInput) {
 var markovChain;
 var markovChain_order1;
 var states;
-var order = 1;
+var order = 2;
 
 function playMarkov() {
     makeMarkovChain(trainingNotes);
@@ -242,12 +242,12 @@ function getNGramCounts(noteList) {
         trigram_counts[trigram[0]][trigram[1]][trigram[2]]++;
     }
     if (noteList.notes.length > 0) {
-        bigram_counts[noteList.notes[i].pitch][noteList.notes[i + 1].pitch]++;
-        unigram_counts[noteList.notes[i].pitch]++;
+        bigram_counts[states[noteList.notes[i].pitch]][states[noteList.notes[i + 1].pitch]]++;
+        unigram_counts[states[noteList.notes[i].pitch]]++;
         i++;
     }
     if (noteList.notes.length > 0) {
-        unigram_counts[noteList.notes[i].pitch]++;
+        unigram_counts[states[noteList.notes[i].pitch]]++;
     }
     return [unigram_counts, bigram_counts, trigram_counts];
 }
@@ -262,7 +262,7 @@ function newNote(noteList) {
 
 function getNextNote(pitch) {
     randomNote = Math.random();
-    note = [0, markovChain[states[pitch]][0]];
+    note = [0, markovChain[states[pitch]]];
     while (note[1] < randomNote) {
         note[0]++;
         note[1] += markovChain[states[pitch]][note[0]];
@@ -480,10 +480,10 @@ function makeZeroSquareMatrix(n0, n1) {
 }
 
 function makeZeroCubeMatrix(n0, n1, n2) {
-    m0 = []
+    m0 = [];
     for (i = 0; i < n0; i++) {
         m1 = [];
-        for (i = 0; i < n1; i++) {
+        for (j = 0; j < n1; j++) {
             row = new Array(n2).fill(0);
             m1.push(row);
         }
