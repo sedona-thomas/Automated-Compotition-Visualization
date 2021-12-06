@@ -89,7 +89,20 @@ function play() {
 function visualize(notes) {
     // TODO: edit html page
 
+    var canvas = document.getElementById("canvas");
+    var ctx = c.getContext("2d");
+    var gradient = ctx.createRadialGradient(75, 50, 5, 90, 60, 100);
+    interval = 1 / (notes.length + 1);
+    for (i = 0; i < notes.length; i++) {
+        gradient.addColorStop(interval * i, getColor(notes[i]));
+    }
+    gradient.addColorStop(1, "white");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(20, 20, 500, 250);
+}
 
+function getColor(note) {
+    return "black";
 }
 
 // automateComposition(): creates the series of notes to play
