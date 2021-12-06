@@ -18,6 +18,31 @@ TWINKLE_TWINKLE = {
     totalTime: 8
 };
 
+const CSS_COLOR_NAMES = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure",
+    "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown",
+    "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue",
+    "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod", "DarkGray",
+    "DarkGrey", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange",
+    "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray",
+    "DarkSlateGrey", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray",
+    "DimGrey", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia",
+    "Gainsboro", "GhostWhite", "Gold", "GoldenRod", "Gray", "Grey", "Green", "GreenYellow",
+    "HoneyDew", "HotPink", "IndianRed", "Indigo", "Ivory", "Khaki", "Lavender", "LavenderBlush",
+    "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenRodYellow",
+    "LightGray", "LightGrey", "LightGreen", "LightPink", "LightSalmon", "LightSeaGreen",
+    "LightSkyBlue", "LightSlateGray", "LightSlateGrey", "LightSteelBlue", "LightYellow", "Lime",
+    "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquaMarine", "MediumBlue", "MediumOrchid",
+    "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise",
+    "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite",
+    "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenRod",
+    "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink",
+    "Plum", "PowderBlue", "Purple", "RebeccaPurple", "Red", "RosyBrown", "RoyalBlue",
+    "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver",
+    "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue",
+    "Tan", "Teal", "Thistle", "Tomato", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke",
+    "Yellow", "YellowGreen",
+];
+
 var text = "hello world";
 var trainingNotes = TWINKLE_TWINKLE;
 var sequence_length = 20;
@@ -82,28 +107,31 @@ const lfoOffButton = document.getElementById("lfoOff");
 lfoOffButton.addEventListener('click', function () { lfo = false; }, false);
 
 function play() {
-    playMarkov();
+    //playMarkov();
     visualize(TWINKLE_TWINKLE);
 }
 
 // visualize(): visualizes series of notes as they play
-function visualize(notes) {
+function visualize(notesList) {
     // TODO: edit html page
-
-    var canvas = document.getElementById("canvas");
-    var ctx = c.getContext("2d");
-    var gradient = ctx.createRadialGradient(75, 50, 5, 90, 60, 100);
+    notes = notesList.notes;
+    size = 500;
+    canvas = document.getElementById("visualization");
+    canvasCtx = canvas.getContext("2d");
+    gradient = canvasCtx.createRadialGradient(size / 2, size / 2, size / 4, size / 2, size / 2, size / 2);
     interval = 1 / (notes.length + 1);
     for (i = 0; i < notes.length; i++) {
-        gradient.addColorStop(interval * i, getColor(notes[i]));
+        console.log(i)
+        gradient.addColorStop(interval * i, getColor(notes[i].pitch));
     }
     gradient.addColorStop(1, "white");
-    ctx.fillStyle = gradient;
-    ctx.fillRect(20, 20, 500, 250);
+
+    canvasCtx.fillStyle = gradient;
+    canvasCtx.fillRect(0, 0, size, size);
 }
 
 function getColor(note) {
-    return "black";
+    return CSS_COLOR_NAMES[Math.floor(Math.random() * CSS_COLOR_NAMES.length)];
 }
 
 // automateComposition(): creates the series of notes to play
