@@ -113,18 +113,20 @@ function play() {
 
 // visualize(): visualizes series of notes as they play
 function visualize(notesList) {
-    // TODO: edit html page
     notes = notesList.notes;
     size = 500;
     canvas = document.getElementById("visualization");
     canvasCtx = canvas.getContext("2d");
+    radialPattern(canvasCtx);
+}
+
+function radialPattern(canvasCtx) {
     gradient = canvasCtx.createRadialGradient(size / 2, size / 2, size / 4, size / 2, size / 2, size / 2);
     interval = 1 / (notes.length + 1);
     for (i = 0; i < notes.length; i++) {
         gradient.addColorStop(interval * i, getColor(notes[i].pitch));
     }
     gradient.addColorStop(1, "white");
-
     canvasCtx.fillStyle = gradient;
     canvasCtx.fillRect(0, 0, size, size);
 }
