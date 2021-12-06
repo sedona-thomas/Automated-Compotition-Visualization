@@ -83,6 +83,7 @@ lfoOffButton.addEventListener('click', function () { lfo = false; }, false);
 
 function play() {
     playMarkov();
+    visualize(TWINKLE_TWINKLE);
 }
 
 // visualize(): visualizes series of notes as they play
