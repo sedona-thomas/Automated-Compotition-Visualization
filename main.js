@@ -108,16 +108,17 @@ const lfoOffButton = document.getElementById("lfoOff");
 lfoOffButton.addEventListener('click', function () { lfo = false; }, false);
 
 function play() {
-    //playMarkov();
-    getStates(trainingNotes);
-    visualize(trainingNotes);
+    playMarkov();
+    visualize();
 }
 
 // visualize(): visualizes series of notes as they play
-function visualize(notesList) {
+function visualize() {
+    notesList = trainingNotes;
     size = 500;
     canvas = document.getElementById("visualization");
     canvasCtx = canvas.getContext("2d");
+    getStates(notesList);
     radialPattern(canvasCtx, size, notesList);
 }
 
@@ -125,18 +126,25 @@ function radialPattern(canvasCtx, size, notesList) {
     gradient = canvasCtx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
     increment = 10;
     interval = 1 / (notesList.notes.length + 1);
-    let i = 0;
+    colors = getColors(Object.keys(states).length);
     for (i = 0; i < notesList.notes.length; i++) {
-        gradient.addColorStop(i * interval, getColor(notesList.notes[i].pitch));
+        gradient.addColorStop(i * interval, getColor(colors, notesList.notes[i].pitch));
     }
     gradient.addColorStop(1, "white");
     canvasCtx.fillStyle = gradient;
     canvasCtx.fillRect(0, 0, size, size);
 }
 
-function getColor(note) {
-    
-    return CSS_COLOR_NAMES[Math.floor(Math.random() * CSS_COLOR_NAMES.length)];
+function getColors(size) {
+    colors = [];
+    for (i = 0; i < size; i++) {
+        colors.push(CSS_COLOR_NAMES[Math.floor(Math.random() * CSS_COLOR_NAMES.length)]);
+    }
+    return colors;
+}
+
+function getColor(colors, pitch) {
+    return colors[states[pitch]];
 }
 
 // automateComposition(): creates the series of notes to play
@@ -183,7 +191,7 @@ function getStates(noteList) {
 
 var markovChain;
 var markovChain_order1;
-var order = 2;
+var order = 1;
 
 function playMarkov() {
     makeMarkovChain(trainingNotes);
@@ -198,43 +206,11 @@ function genNotes(noteList) {
     let newNotes = copyNoteList(noteList);
     let sequenceEnd = newNotes.notes.length + sequence_length;
     for (i = newNotes.notes.length; i < sequenceEnd; i++) {
-        const newNoteCopy = newNote(newNotes);
+        const newNoteCopy = newNote(newNotes, i);
         newNotes.notes.push(newNoteCopy);
         newNotes.totalTime = newNoteCopy.endTime;
     }
     return newNotes;
-}
-
-// NOT SURE HOW THIS WILL BE USED YET
-function perplexity(corpus) {
-    prob = [];
-    m = 0;
-    corpus.forEach(unit => {
-        m += len(unit) + 1
-        prob.push(sentenceTrigramLogprob(s))
-    });
-    return 2 ** ((-1 / m) * sum(prob));
-}
-
-function sequenceTrigramLogprob(sequence) {
-    counts = getNGramCounts(noteList);
-    prob = [];
-    counts[2].forEach(t => {
-        p = smoothedTrigramProbability(t);
-        if (p > 0) {
-            prob.push(Math.log2(p));
-        }
-    });
-    return sum(prob);
-}
-
-function smoothedTrigramProbability(trigram) {
-    counts = getNGramCounts(noteList);
-    lambda = [1 / 3.0, 1 / 3.0, 1 / 3.0];
-    a = lambda[2] * counts[2][trigram[0]][trigram[1]][trigram[2]] / counts[1][trigram[0]][trigram[1]]
-    b = lambda[1] * counts[1][trigram[0]][trigram[1]] / counts[0][trigram[0]]
-    c = lambda[0] * counts[0][trigram[0]] / sum(counts[0]);
-    return a + b + c;
 }
 
 function makeMarkovChain(noteList) {
@@ -273,18 +249,20 @@ function getNGramCounts(noteList) {
         bigram_counts[trigram[0]][trigram[1]]++;
         trigram_counts[trigram[0]][trigram[1]][trigram[2]]++;
     }
-    if (noteList.notes.length > 0) {
-        bigram_counts[states[noteList.notes[i].pitch]][states[noteList.notes[i + 1].pitch]]++;
-        unigram_counts[states[noteList.notes[i].pitch]]++;
+    if (noteList.notes.length > 1) {
+        bigram = [states[noteList.notes[i].pitch], states[noteList.notes[i + 1].pitch]];
+        bigram_counts[bigram[0]][bigram[1]]++;
+        unigram_counts[bigram[0]]++;
         i++;
     }
     if (noteList.notes.length > 0) {
-        unigram_counts[states[noteList.notes[i].pitch]]++;
+        unigram = [states[noteList.notes[i].pitch]];
+        unigram_counts[unigram[0]]++;
     }
     return [unigram_counts, bigram_counts, trigram_counts];
 }
 
-function newNote(noteList) {
+function newNote(noteList, i) {
     let newNote = JSON.parse(JSON.stringify(noteList.notes[i - 1]));
     newNote.pitch = getNextNote(newNote.pitch);
     newNote.startTime = newNote.endTime;
@@ -294,7 +272,7 @@ function newNote(noteList) {
 
 function getNextNote(pitch) {
     randomNote = Math.random();
-    note = [0, markovChain[states[pitch]]];
+    note = [0, markovChain[states[pitch]][0]];
     while (note[1] < randomNote) {
         note[0]++;
         note[1] += markovChain[states[pitch]][note[0]];
@@ -309,6 +287,38 @@ function copyNoteList(noteList) {
         notesCopy.totalTime = note.endTime;
     });
     return notesCopy;
+}
+
+// NOT SURE HOW THIS WILL BE USED YET
+function perplexity(corpus) {
+    prob = [];
+    m = 0;
+    corpus.forEach(unit => {
+        m += len(unit) + 1
+        prob.push(sentenceTrigramLogprob(s))
+    });
+    return 2 ** ((-1 / m) * sum(prob));
+}
+
+function sequenceTrigramLogprob(sequence) {
+    counts = getNGramCounts(noteList);
+    prob = [];
+    counts[2].forEach(t => {
+        p = smoothedTrigramProbability(t);
+        if (p > 0) {
+            prob.push(Math.log2(p));
+        }
+    });
+    return sum(prob);
+}
+
+function smoothedTrigramProbability(trigram) {
+    counts = getNGramCounts(noteList);
+    lambda = [1 / 3.0, 1 / 3.0, 1 / 3.0];
+    a = lambda[2] * counts[2][trigram[0]][trigram[1]][trigram[2]] / counts[1][trigram[0]][trigram[1]]
+    b = lambda[1] * counts[1][trigram[0]][trigram[1]] / counts[0][trigram[0]]
+    c = lambda[0] * counts[0][trigram[0]] / sum(counts[0]);
+    return a + b + c;
 }
 
 /*
