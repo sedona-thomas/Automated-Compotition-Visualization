@@ -1,4 +1,4 @@
-TWINKLE_TWINKLE = {
+const TWINKLE_TWINKLE = {
     notes: [
         { pitch: 60, startTime: 0.0, endTime: 0.5 },
         { pitch: 60, startTime: 0.5, endTime: 1.0 },
@@ -40,7 +40,7 @@ const CSS_COLOR_NAMES = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azu
     "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver",
     "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue",
     "Tan", "Teal", "Thistle", "Tomato", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke",
-    "Yellow", "YellowGreen",
+    "Yellow", "YellowGreen"
 ];
 
 var text = "hello world";
@@ -69,47 +69,33 @@ playButton.addEventListener('click', function () {
     play();
 });
 
-const textButton = document.getElementById("submit_text");
-textButton.addEventListener('click', function () {
-    text = parseSong(document.getElementById('text').value);
-}, false);
-
-const lengthButton = document.getElementById("submit_length");
-lengthButton.addEventListener('click', function () {
-    note_length = parseInt(document.getElementById('length').value);
-}, false);
-
-const seqLengthButton = document.getElementById("submit_seq_length");
-seqLengthButton.addEventListener('click', function () {
-    sequence_length = parseInt(document.getElementById('seq_length').value);
-}, false);
-
-const singleButton = document.getElementById("single");
-singleButton.addEventListener('click', function () { mode = 'single'; }, false);
-const additiveButton = document.getElementById("additive");
-additiveButton.addEventListener('click', function () { mode = 'additive'; }, false);
-const AMButton = document.getElementById("am");
-AMButton.addEventListener('click', function () { mode = 'am'; }, false);
-const FMButton = document.getElementById("fm");
-FMButton.addEventListener('click', function () { mode = 'fm'; }, false);
-
-const sineButton = document.getElementById("sine");
-sineButton.addEventListener('click', function () { waveform = 'sine'; }, false);
-const sawtoothButton = document.getElementById("sawtooth");
-sawtoothButton.addEventListener('click', function () { waveform = 'sawtooth'; }, false);
-const squareButton = document.getElementById("square");
-squareButton.addEventListener('click', function () { waveform = 'square'; }, false);
-const triangleButton = document.getElementById("triangle");
-triangleButton.addEventListener('click', function () { waveform = 'triangle'; }, false);
-
-const lfoOnButton = document.getElementById("lfoOn");
-lfoOnButton.addEventListener('click', function () { lfo = true; }, false);
-const lfoOffButton = document.getElementById("lfoOff");
-lfoOffButton.addEventListener('click', function () { lfo = false; }, false);
-
 function play() {
     playMarkov();
     visualize();
+}
+
+// automateComposition(): creates the series of notes to play
+function automateComposition(notes) {
+    // TODO: generate audio from input notes
+
+
+
+}
+
+// processText(): creates notes series from raw text input
+function processText(rawInput) {
+    notes = {
+        notes: [
+            { pitch: 0, startTime: 0.0, endTime: 0.0 }
+        ],
+        totalTime: 0
+    };
+
+    // TODO: write method
+
+
+
+    return notes;
 }
 
 // visualize(): visualizes series of notes as they play
@@ -145,30 +131,6 @@ function getColors(size) {
 
 function getColor(colors, pitch) {
     return colors[states[pitch]];
-}
-
-// automateComposition(): creates the series of notes to play
-function automateComposition(notes) {
-    // TODO: generate audio from input notes
-
-
-
-}
-
-// processText(): creates notes series from raw text input
-function processText(rawInput) {
-    notes = {
-        notes: [
-            { pitch: 0, startTime: 0.0, endTime: 0.0 }
-        ],
-        totalTime: 0
-    };
-
-    // TODO: write method
-
-
-
-    return notes;
 }
 
 function getStates(noteList) {
@@ -499,6 +461,10 @@ function stopNote(note) {
     delete activeOscillators[note];
 }
 
+/*
+ * helper methods
+ */
+
 function multiplyMatrices(m1, m2) {
     let dim = [m1.length, m2[0].length];
     let product = makeZeroSquareMatrix(dim[0], dim[1]);
@@ -559,3 +525,41 @@ function updatePartialDistance(value) { partialSize = value; };
 function updateFreq(value) { modulatorFrequencyValue = value; };
 function updateIndex(value) { modulationIndexValue = value; };
 function updateLfo(value) { lfoFreq = value; };
+
+const textButton = document.getElementById("submit_text");
+textButton.addEventListener('click', function () {
+    text = parseSong(document.getElementById('text').value);
+}, false);
+
+const lengthButton = document.getElementById("submit_length");
+lengthButton.addEventListener('click', function () {
+    note_length = parseInt(document.getElementById('length').value);
+}, false);
+
+const seqLengthButton = document.getElementById("submit_seq_length");
+seqLengthButton.addEventListener('click', function () {
+    sequence_length = parseInt(document.getElementById('seq_length').value);
+}, false);
+
+const singleButton = document.getElementById("single");
+singleButton.addEventListener('click', function () { mode = 'single'; }, false);
+const additiveButton = document.getElementById("additive");
+additiveButton.addEventListener('click', function () { mode = 'additive'; }, false);
+const AMButton = document.getElementById("am");
+AMButton.addEventListener('click', function () { mode = 'am'; }, false);
+const FMButton = document.getElementById("fm");
+FMButton.addEventListener('click', function () { mode = 'fm'; }, false);
+
+const sineButton = document.getElementById("sine");
+sineButton.addEventListener('click', function () { waveform = 'sine'; }, false);
+const sawtoothButton = document.getElementById("sawtooth");
+sawtoothButton.addEventListener('click', function () { waveform = 'sawtooth'; }, false);
+const squareButton = document.getElementById("square");
+squareButton.addEventListener('click', function () { waveform = 'square'; }, false);
+const triangleButton = document.getElementById("triangle");
+triangleButton.addEventListener('click', function () { waveform = 'triangle'; }, false);
+
+const lfoOnButton = document.getElementById("lfoOn");
+lfoOnButton.addEventListener('click', function () { lfo = true; }, false);
+const lfoOffButton = document.getElementById("lfoOff");
+lfoOffButton.addEventListener('click', function () { lfo = false; }, false);
