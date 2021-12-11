@@ -43,6 +43,16 @@ const CSS_COLOR_NAMES = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azu
     "Yellow", "YellowGreen"
 ];
 
+// Ordered in how long you would pause after each one (increasing in time).
+// TODO: Include ellipsis? "..."
+const PUNCTUATION_MARKS = ["—", ",", ";", ":", "!", "?", "."]
+const PUNCTUATION_INCREMENT = 0.1
+// 120 bpm is moderate tempo. Assume 4/4 time signature; each quarter note lasts 0.5 seconds.
+const DEFAULT_NOTE_LENGTH = 0.5
+// Average word length: 4.79 letters (http://norvig.com/mayzner.html) -- round up to 5.
+const AVERAGE_WORD_LENGTH = 5
+
+
 var text = "hello world";
 var trainingNotes = TWINKLE_TWINKLE;
 var sequence_length = 20;
@@ -63,6 +73,9 @@ var modulatorFrequencyValue = 100;
 var modulationIndexValue = 100;
 var lfoFreq = 2;
 
+// Middle C. 
+const BASE_PITCH = 60;
+
 const playButton = document.querySelector('button');
 playButton.addEventListener('click', function () {
     audioCtx = new (window.AudioContext || window.webkitAudioContext);
@@ -78,22 +91,46 @@ function play() {
 function automateComposition(notes) {
     // TODO: generate audio from input notes
 
-
-
 }
 
 // processText(): creates notes series from raw text input
 function processText(rawInput) {
-    notes = {
-        notes: [
-            { pitch: 0, startTime: 0.0, endTime: 0.0 }
-        ],
-        totalTime: 0
-    };
+    // notes = {
+    //     notes: [
+    //         { pitch: 0, startTime: 0.0, endTime: 0.0 }
+    //     ],
+    //     totalTime: 0
+    // };
 
-    // TODO: write method
+    timeElapsed = 0.0
 
+    notes = []
+    const wordsArray = rawInput.split(" ")
+    for (let word of wordsArray) {
+        new_note = {}
+        new_note[startTime] = timeElapsed
+        
+        // Look at word length. 
+        let note_duration = word.length / AVERAGE_WORD_LENGTH * DEFAULT_NOTE_LENGTH 
+        timeElapsed += note_duration
+        new_note[endTime] = timeElapsed
 
+        // Determine pitch by the first letter of the word (mapping it onto a set range of frequencies.)
+        // Distance from "m." 
+        // "m" maps to middle C perfectly. 
+        let d = word[0].toLowerCase().charCodeAt(0) - "m".charCodeAt(0)
+        new_note[pitch] = BASE_PITCH + d
+
+        // Determine gap between words by looking if the word ends in punctuation.
+        // Assume the input is grammatically correct for now (no period, comma, semicolon, colon, question mark, or exclamation mark without a space).
+        // TODO(?): Account for punctuation in the middle of an input (like "wo,rd wo!rd wo.rd"). 
+        let last_char = word.charAt(word.length - 1)
+        if (PUNCTUATION_MARKS.includes(last_char)) {
+            timeElapsed += PUNCTUATION_MARKS.indexOf(last_char) * PUNCTUATION_INCREMENT
+        }
+
+        notes.push(new_note)
+    }
 
     return notes;
 }
@@ -313,6 +350,8 @@ function playNoteSingle(note) {
     gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
 
     const osc = audioCtx.createOscillator();
+    console.log("note pitch: ", note.pitch)
+    console.log("translated to freq: ", midiToFreq(note.pitch))
     osc.frequency.setValueAtTime(midiToFreq(note.pitch), audioCtx.currentTime);
     osc.type = waveform;
     osc.connect(gainNode).connect(audioCtx.destination);
