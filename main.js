@@ -156,19 +156,6 @@ function visualize(notesList) {
     radialPattern(canvasCtx, size, notesList);
 }
 
-// function radialPattern(canvasCtx, size, notesList) {
-//     gradient = canvasCtx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-//     increment = 10;
-//     interval = 1 / (notesList.notes.length + 1);
-//     colors = getColors(Object.keys(states).length);
-//     for (i = 0; i < notesList.notes.length; i++) {
-//         gradient.addColorStop(i * interval, getColor(colors, notesList.notes[i].pitch));
-//     }
-//     gradient.addColorStop(1, "white");
-//     canvasCtx.fillStyle = gradient;
-//     canvasCtx.fillRect(0, 0, size, size);
-// }
-
 function radialPattern(canvasCtx, size, notesList) {
     gradient = canvasCtx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
     increment = 10;
