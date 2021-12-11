@@ -82,50 +82,44 @@ const DRAW_TIME_OFFSET = 1000
 const textButton = document.getElementById("submit_text");
 textButton.addEventListener('click', function () {
     audioCtx = new (window.AudioContext || window.webkitAudioContext);
-
-    // Use the text input.
     let textInput = document.getElementById("text").value
     if (textInput.length > 0) {
         play(textInput);
     }
 }, false);
 
+// play(): processes text input, performs automated composition, and plays with visuals
 function play(textInput) {
-    //playMarkov();
-    let notes = processText(textInput)
-    let fullNotesList = automateComposition(notes)
+    let notes = processText(textInput);
+    let fullNotesList = automateComposition(notes);
+    playNotes(fullNotesList);
     visualize(fullNotesList);
+}
+
+// playNotes(): plays the inputted series of notes
+function playNotes(notes) {
+    notes.notes.forEach(note => {
+        playNote(note);
+    });
 }
 
 // automateComposition(): creates the series of notes to play
 function automateComposition(notes) {
-    // TODO: generate audio from input notes
-    //playMarkov()
-    notes.notes.forEach(note => {
-        playNote(note);
-    });
-    return notes;
+    let markovNotes = processMarkov(notes);
+    return markovNotes;
 }
 
 // processText(): creates notes series from raw text input
 function processText(rawInput) {
-    // notes = {
-    //     notes: [
-    //         { pitch: 0, startTime: 0.0, endTime: 0.0 }
-    //     ],
-    //     totalTime: 0
-    // };
-
     timeElapsed = 0.0
-
     notes = []
     const wordsArray = rawInput.split(" ")
     for (let word of wordsArray) {
         new_note = {}
         new_note.startTime = timeElapsed
-        
+
         // Look at word length. 
-        let note_duration = word.length / AVERAGE_WORD_LENGTH * DEFAULT_NOTE_LENGTH 
+        let note_duration = word.length / AVERAGE_WORD_LENGTH * DEFAULT_NOTE_LENGTH
         timeElapsed += note_duration
         new_note.endTime = timeElapsed
 
@@ -148,8 +142,8 @@ function processText(rawInput) {
 
         notes.push(new_note)
     }
-    let output = { notes, totalTime: timeElapsed}
-    console.log("output: ", output)
+    let output = { notes, totalTime: timeElapsed }
+    console.log("processText() output: ", output)
     return output;
 }
 
@@ -188,15 +182,15 @@ function radialPattern(canvasCtx, size, notesList) {
             gradient.addColorStop(gradientInterval, getColor(colors, pitch));
             canvasCtx.fillStyle = gradient;
             canvasCtx.fillRect(0, 0, size, size);
-            console.log("timing out")
+            console.log("timing out");
         }, startTime);
     }
-
     gradient.addColorStop(1, "white");
     canvasCtx.fillStyle = gradient;
     canvasCtx.fillRect(0, 0, size, size);
 }
 
+// selects a random set of colors of length size
 function getColors(size) {
     colors = [];
     for (i = 0; i < size; i++) {
@@ -231,22 +225,28 @@ var markovChain;
 var markovChain_order1;
 var order = 1;
 
-function playMarkov() {
-    makeMarkovChain(trainingNotes);
-    let song = genNotes(trainingNotes);
-    song.notes.forEach(note => {
-        playNote(note);
-    });
-    console.log(song);
+function processMarkov(notes) {
+    makeMarkovChain(notes);
+    let song = genNotes(notes);
+    return song;
 }
 
 function genNotes(noteList) {
-    let newNotes = copyNoteList(noteList);
+    let newNotes = { notes: [], totalTime: 0 };
+    noteList.notes.forEach(note => {
+        newNotes.notes.push(note);
+        newNotes.totalTime = note.endTime;
+    });
+    let currentEnd = newNotes.totalTime;
     let sequenceEnd = newNotes.notes.length + sequence_length;
     for (i = newNotes.notes.length; i < sequenceEnd; i++) {
-        const newNoteCopy = newNote(newNotes, i);
+        let newNoteCopy = {};
+        newNoteCopy.pitch = getNextNote(noteList.notes[i - 1]);
+        newNoteCopy.startTime = currentEnd;
+        newNoteCopy.endTime = currentEnd + note_length;
         newNotes.notes.push(newNoteCopy);
-        newNotes.totalTime = newNoteCopy.endTime;
+        newNotes.totalTime = currentEnd + note_length;
+        currentEnd += note_length
     }
     return newNotes;
 }
@@ -300,16 +300,8 @@ function getNGramCounts(noteList) {
     return [unigram_counts, bigram_counts, trigram_counts];
 }
 
-function newNote(noteList, i) {
-    let newNote = JSON.parse(JSON.stringify(noteList.notes[i - 1]));
-    newNote.pitch = getNextNote(newNote.pitch);
-    newNote.startTime = newNote.endTime;
-    newNote.endTime = newNote.startTime + note_length;
-    return newNote;
-}
-
 function getNextNote(pitch) {
-    if (pitch) {
+    if (Object.keys(states).includes(pitch)) {
         randomNote = Math.random();
         note = [0, markovChain[states[pitch]][0]];
         while (note[1] < randomNote) {
@@ -318,15 +310,10 @@ function getNextNote(pitch) {
         }
         return parseInt(Object.keys(states)[note[0]]);
     }
-}
-
-function copyNoteList(noteList) {
-    let notesCopy = { notes: [], totalTime: 0 };
-    noteList.notes.forEach(note => {
-        notesCopy.notes.push(note);
-        notesCopy.totalTime = note.endTime;
-    });
-    return notesCopy;
+    else {
+        randomChoice = Math.floor(Math.random() * Object.keys(states).length);
+        return parseInt(Object.keys(states)[randomChoice]);
+    }
 }
 
 // NOT SURE HOW THIS WILL BE USED YET
@@ -389,8 +376,10 @@ function playNoteSingle(note) {
     gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
 
     const osc = audioCtx.createOscillator();
-    console.log("note pitch: ", note.pitch)
-    console.log("translated to freq: ", midiToFreq(note.pitch))
+
+    console.log("note pitch: ", note.pitch);
+    console.log("translated to freq: ", midiToFreq(note.pitch));
+
     osc.frequency.setValueAtTime(midiToFreq(note.pitch), audioCtx.currentTime);
     osc.type = waveform;
     osc.connect(gainNode).connect(audioCtx.destination);
