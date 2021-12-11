@@ -53,7 +53,7 @@ const DEFAULT_NOTE_LENGTH = 0.5
 const AVERAGE_WORD_LENGTH = 5
 
 // Two Middle C notes.
-const TRAINING_TEXT = "mmmmm mmmmm lllll ppppp"
+const TRAINING_TEXT = "mmmmm lllll ppppp"
 //const TRAINING_TEXT = "mmmmm mmmmm"
 // Middle C. 
 const BASE_PITCH = 60;
@@ -77,6 +77,9 @@ var partialDistance = 15;
 var modulatorFrequencyValue = 100;
 var modulationIndexValue = 100;
 var lfoFreq = 2;
+
+// Not sure why it takes a while for sound to start playing but this syncs up sound/visuals.
+const DRAW_TIME_OFFSET = 1000
 
 const playButton = document.querySelector('button');
 playButton.addEventListener('click', function () {
@@ -174,7 +177,7 @@ function radialPattern(canvasCtx, size, notesList) {
     colors = getColors(Object.keys(states).length);
     for (i = 0; i < notesList.notes.length; i++) {
         let pitch = notesList.notes[i].pitch
-        let startTime = notesList.notes[i].startTime * 1000
+        let startTime = notesList.notes[notesList.notes.length - i - 1].startTime * 1000 + DRAW_TIME_OFFSET
         let gradientInterval = i * interval
         setTimeout(function () {
             gradient.addColorStop(gradientInterval, getColor(colors, pitch));
@@ -184,12 +187,9 @@ function radialPattern(canvasCtx, size, notesList) {
         }, startTime);
     }
 
-    let lastEndTime = notesList.notes[notesList.notes.length - 1].endTime * 1000
-    setTimeout(function() {
-        gradient.addColorStop(1, "white");
-        canvasCtx.fillStyle = gradient;
-        canvasCtx.fillRect(0, 0, size, size);
-    }, lastEndTime)
+    gradient.addColorStop(1, "white");
+    canvasCtx.fillStyle = gradient;
+    canvasCtx.fillRect(0, 0, size, size);
 }
 
 function getColors(size) {
