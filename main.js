@@ -53,7 +53,8 @@ const DEFAULT_NOTE_LENGTH = 0.5
 const AVERAGE_WORD_LENGTH = 5
 
 // Two Middle C notes.
-const TRAINING_TEXT = "mmmmm mmmmm"
+const TRAINING_TEXT = "mmmmm mmmmm lllll ppppp"
+//const TRAINING_TEXT = "mmmmm mmmmm"
 // Middle C. 
 const BASE_PITCH = 60;
 
@@ -84,14 +85,19 @@ playButton.addEventListener('click', function () {
 });
 
 function play() {
-    playMarkov();
+    //playMarkov();
+    let notes = processText(TRAINING_TEXT)
+    automateComposition(notes)
     visualize();
 }
 
 // automateComposition(): creates the series of notes to play
 function automateComposition(notes) {
     // TODO: generate audio from input notes
-    playMarkov()
+    //playMarkov()
+    notes.notes.forEach(note => {
+        playNote(note);
+    });
 }
 
 // processText(): creates notes series from raw text input
@@ -139,6 +145,7 @@ function processText(rawInput) {
 
 // visualize(): visualizes series of notes as they play
 function visualize() {
+    console.log("VISUALIZE")
     notesList = trainingNotes;
     size = 500;
     canvas = document.getElementById("visualization");
@@ -147,17 +154,42 @@ function visualize() {
     radialPattern(canvasCtx, size, notesList);
 }
 
+// function radialPattern(canvasCtx, size, notesList) {
+//     gradient = canvasCtx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+//     increment = 10;
+//     interval = 1 / (notesList.notes.length + 1);
+//     colors = getColors(Object.keys(states).length);
+//     for (i = 0; i < notesList.notes.length; i++) {
+//         gradient.addColorStop(i * interval, getColor(colors, notesList.notes[i].pitch));
+//     }
+//     gradient.addColorStop(1, "white");
+//     canvasCtx.fillStyle = gradient;
+//     canvasCtx.fillRect(0, 0, size, size);
+// }
+
 function radialPattern(canvasCtx, size, notesList) {
     gradient = canvasCtx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
     increment = 10;
     interval = 1 / (notesList.notes.length + 1);
     colors = getColors(Object.keys(states).length);
     for (i = 0; i < notesList.notes.length; i++) {
-        gradient.addColorStop(i * interval, getColor(colors, notesList.notes[i].pitch));
+        let pitch = notesList.notes[i].pitch
+        let startTime = notesList.notes[i].startTime * 1000
+        let gradientInterval = i * interval
+        setTimeout(function () {
+            gradient.addColorStop(gradientInterval, getColor(colors, pitch));
+            canvasCtx.fillStyle = gradient;
+            canvasCtx.fillRect(0, 0, size, size);
+            console.log("timing out")
+        }, startTime);
     }
-    gradient.addColorStop(1, "white");
-    canvasCtx.fillStyle = gradient;
-    canvasCtx.fillRect(0, 0, size, size);
+
+    let lastEndTime = notesList.notes[notesList.notes.length - 1].endTime * 1000
+    setTimeout(function() {
+        gradient.addColorStop(1, "white");
+        canvasCtx.fillStyle = gradient;
+        canvasCtx.fillRect(0, 0, size, size);
+    }, lastEndTime)
 }
 
 function getColors(size) {
