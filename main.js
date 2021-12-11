@@ -91,7 +91,7 @@ function play() {
 // automateComposition(): creates the series of notes to play
 function automateComposition(notes) {
     // TODO: generate audio from input notes
-
+    playMarkov()
 }
 
 // processText(): creates notes series from raw text input
