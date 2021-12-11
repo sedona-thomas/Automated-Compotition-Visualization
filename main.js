@@ -52,9 +52,13 @@ const DEFAULT_NOTE_LENGTH = 0.5
 // Average word length: 4.79 letters (http://norvig.com/mayzner.html) -- round up to 5.
 const AVERAGE_WORD_LENGTH = 5
 
+// Two Middle C notes.
+const TRAINING_TEXT = "mmmmm mmmmm"
+// Middle C. 
+const BASE_PITCH = 60;
 
 var text = "hello world";
-var trainingNotes = TWINKLE_TWINKLE;
+var trainingNotes = processText(TRAINING_TEXT);
 var sequence_length = 20;
 var note_length = 0.5;
 var states;
@@ -72,9 +76,6 @@ var partialDistance = 15;
 var modulatorFrequencyValue = 100;
 var modulationIndexValue = 100;
 var lfoFreq = 2;
-
-// Middle C. 
-const BASE_PITCH = 60;
 
 const playButton = document.querySelector('button');
 playButton.addEventListener('click', function () {
@@ -108,18 +109,18 @@ function processText(rawInput) {
     const wordsArray = rawInput.split(" ")
     for (let word of wordsArray) {
         new_note = {}
-        new_note[startTime] = timeElapsed
+        new_note.startTime = timeElapsed
         
         // Look at word length. 
         let note_duration = word.length / AVERAGE_WORD_LENGTH * DEFAULT_NOTE_LENGTH 
         timeElapsed += note_duration
-        new_note[endTime] = timeElapsed
+        new_note.endTime = timeElapsed
 
         // Determine pitch by the first letter of the word (mapping it onto a set range of frequencies.)
         // Distance from "m." 
         // "m" maps to middle C perfectly. 
         let d = word[0].toLowerCase().charCodeAt(0) - "m".charCodeAt(0)
-        new_note[pitch] = BASE_PITCH + d
+        new_note.pitch = BASE_PITCH + d
 
         // Determine gap between words by looking if the word ends in punctuation.
         // Assume the input is grammatically correct for now (no period, comma, semicolon, colon, question mark, or exclamation mark without a space).
@@ -131,8 +132,9 @@ function processText(rawInput) {
 
         notes.push(new_note)
     }
-
-    return notes;
+    let output = { notes, totalTime: timeElapsed}
+    console.log("output: ", output)
+    return output;
 }
 
 // visualize(): visualizes series of notes as they play
