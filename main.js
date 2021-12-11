@@ -52,9 +52,7 @@ const DEFAULT_NOTE_LENGTH = 0.5
 // Average word length: 4.79 letters (http://norvig.com/mayzner.html) -- round up to 5.
 const AVERAGE_WORD_LENGTH = 5
 
-// Two Middle C notes.
 const TRAINING_TEXT = "mmmmm lllll ppppp"
-//const TRAINING_TEXT = "mmmmm mmmmm"
 // Middle C. 
 const BASE_PITCH = 60;
 
@@ -81,17 +79,22 @@ var lfoFreq = 2;
 // Not sure why it takes a while for sound to start playing but this syncs up sound/visuals.
 const DRAW_TIME_OFFSET = 1000
 
-const playButton = document.querySelector('button');
-playButton.addEventListener('click', function () {
+const textButton = document.getElementById("submit_text");
+textButton.addEventListener('click', function () {
     audioCtx = new (window.AudioContext || window.webkitAudioContext);
-    play();
-});
 
-function play() {
+    // Use the text input.
+    let textInput = document.getElementById("text").value
+    if (textInput.length > 0) {
+        play(textInput);
+    }
+}, false);
+
+function play(textInput) {
     //playMarkov();
-    let notes = processText(TRAINING_TEXT)
-    automateComposition(notes)
-    visualize();
+    let notes = processText(textInput)
+    let fullNotesList = automateComposition(notes)
+    visualize(fullNotesList);
 }
 
 // automateComposition(): creates the series of notes to play
@@ -101,6 +104,7 @@ function automateComposition(notes) {
     notes.notes.forEach(note => {
         playNote(note);
     });
+    return notes;
 }
 
 // processText(): creates notes series from raw text input
@@ -128,6 +132,7 @@ function processText(rawInput) {
         // Determine pitch by the first letter of the word (mapping it onto a set range of frequencies.)
         // Distance from "m." 
         // "m" maps to middle C perfectly. 
+        console.log("word:", word)
         let d = word[0].toLowerCase().charCodeAt(0) - "m".charCodeAt(0)
         new_note.pitch = BASE_PITCH + d
 
@@ -147,9 +152,7 @@ function processText(rawInput) {
 }
 
 // visualize(): visualizes series of notes as they play
-function visualize() {
-    console.log("VISUALIZE")
-    notesList = trainingNotes;
+function visualize(notesList) {
     size = 500;
     canvas = document.getElementById("visualization");
     canvasCtx = canvas.getContext("2d");
@@ -600,11 +603,6 @@ function updatePartialDistance(value) { partialSize = value; };
 function updateFreq(value) { modulatorFrequencyValue = value; };
 function updateIndex(value) { modulationIndexValue = value; };
 function updateLfo(value) { lfoFreq = value; };
-
-const textButton = document.getElementById("submit_text");
-textButton.addEventListener('click', function () {
-    text = parseSong(document.getElementById('text').value);
-}, false);
 
 const lengthButton = document.getElementById("submit_length");
 lengthButton.addEventListener('click', function () {
