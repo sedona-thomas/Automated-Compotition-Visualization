@@ -144,6 +144,8 @@ function processText(rawInput) {
             timeElapsed += PUNCTUATION_MARKS.indexOf(last_char) * PUNCTUATION_INCREMENT
         }
 
+        // TODO: Incorporate POS tagging. 
+
         notes.push(new_note)
     }
     let output = { notes, totalTime: timeElapsed}
