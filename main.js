@@ -607,6 +607,8 @@ function updateFreq(value) { modulatorFrequencyValue = value; };
 function updateIndex(value) { modulationIndexValue = value; };
 function updateLfo(value) { lfoFreq = value; };
 
+
+/*
 const lengthButton = document.getElementById("submit_length");
 lengthButton.addEventListener('click', function () {
     note_length = parseInt(document.getElementById('length').value);
@@ -639,3 +641,4 @@ const lfoOnButton = document.getElementById("lfoOn");
 lfoOnButton.addEventListener('click', function () { lfo = true; }, false);
 const lfoOffButton = document.getElementById("lfoOff");
 lfoOffButton.addEventListener('click', function () { lfo = false; }, false);
+*/
