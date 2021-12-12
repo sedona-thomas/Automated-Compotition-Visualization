@@ -18,6 +18,8 @@ const TWINKLE_TWINKLE = {
     totalTime: 8
 };
 
+const SHAKESPEARE = "From fairest creatures we desire increase, That thereby beauty's rose might never die, But as the riper should by time decease, His tender heir might bear his memory: But thou contracted to thine own bright eyes, Feed'st thy light's flame with self-substantial fuel, Making a famine where abundance lies, Thy self thy foe, to thy sweet self too cruel: Thou that art now the world's fresh ornament, And only herald to the gaudy spring, Within thine own bud buriest thy content, And tender churl mak'st waste in niggarding: Pity the world, or else this glutton be, To eat the world's due, by the grave and thee.";
+
 const CSS_COLOR_NAMES = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure",
     "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown",
     "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue",
@@ -81,6 +83,14 @@ var lfoFreq = 2;
 
 // Not sure why it takes a while for sound to start playing but this syncs up sound/visuals.
 const DRAW_TIME_OFFSET = 1000
+
+const playExampleButton = document.getElementById("play_example");
+playExampleButton.addEventListener('click', function () {
+    let notes = processText(SHAKESPEARE);
+    let fullNotesList = automateComposition(notes);
+    playNotes(fullNotesList);
+    visualize(fullNotesList);
+}, false);
 
 const textButton = document.getElementById("submit_text");
 textButton.addEventListener('click', function () {
