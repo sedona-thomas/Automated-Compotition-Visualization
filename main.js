@@ -61,6 +61,9 @@ var trainingNotes = processText(TRAINING_TEXT);
 var sequence_length = 20;
 var note_length = 0.5;
 var states;
+var markovChain;
+var markovChain_order1;
+var order = 1;
 
 var audioCtx;
 var activeOscillators = {};
@@ -156,6 +159,7 @@ function visualize(notesList) {
     radialPattern(canvasCtx, size, notesList);
 }
 
+// radialPattern(): creates a tree ring pattern for a series of notes
 function radialPattern(canvasCtx, size, notesList) {
     gradient = canvasCtx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
     increment = 10;
@@ -177,7 +181,7 @@ function radialPattern(canvasCtx, size, notesList) {
     canvasCtx.fillRect(0, 0, size, size);
 }
 
-// selects a random set of colors of length size
+// getColors(): selects a random set of colors of length size
 function getColors(size) {
     colors = [];
     for (i = 0; i < size; i++) {
@@ -186,10 +190,12 @@ function getColors(size) {
     return colors;
 }
 
+// getColor(): selects a color given a pitch and color list
 function getColor(colors, pitch) {
     return colors[states[pitch]];
 }
 
+// getStates(): generates a states list for the inputted notes list
 function getStates(noteList) {
     states = {};
     let pitchSet = [];
@@ -204,20 +210,14 @@ function getStates(noteList) {
     }
 }
 
-/*
- * Deals with Markov Chain
- */
-
-var markovChain;
-var markovChain_order1;
-var order = 1;
-
+// processMarkov(): generates a series of notes using a markov chain
 function processMarkov(notes) {
     makeMarkovChain(notes);
     let song = genNotes(notes);
     return song;
 }
 
+// genNotes(): generates a series of notes for the current markov chain
 function genNotes(noteList) {
     let newNotes = { notes: [], totalTime: 0 };
     noteList.notes.forEach(note => {
@@ -238,12 +238,14 @@ function genNotes(noteList) {
     return newNotes;
 }
 
+// makeMarkovChain(): creates markov chain from inputted notes series
 function makeMarkovChain(noteList) {
     getStates(noteList);
     makeMarkovChainOrder1(noteList);
     makeMarkovChainOrderN();
 }
 
+// makeMarkovChainOrderN(): creates markov chain of the current specified order
 function makeMarkovChainOrderN() {
     markovChain = makeIdentityMatrix(Object.keys(states).length);
     for (i = 0; i < order; i++) {
@@ -251,6 +253,7 @@ function makeMarkovChainOrderN() {
     }
 }
 
+// makeMarkovChainOrder1(): creates markov chain of order 1
 function makeMarkovChainOrder1(noteList) {
     numOfNotes = Object.keys(states).length;
     markovChain_order1 = makeZeroSquareMatrix(numOfNotes, numOfNotes);
@@ -262,6 +265,7 @@ function makeMarkovChainOrder1(noteList) {
     }
 }
 
+// getNGramCounts(): gets unigram, bigram, and trigram counts for a note list
 function getNGramCounts(noteList) {
     numOfNotes = Object.keys(states).length;
     unigram_counts = new Array(numOfNotes).fill(0);
@@ -287,6 +291,7 @@ function getNGramCounts(noteList) {
     return [unigram_counts, bigram_counts, trigram_counts];
 }
 
+// getNextNote(): randomly generates a note given markov probabilities
 function getNextNote(pitch) {
     if (Object.keys(states).includes(pitch)) {
         randomNote = Math.random();
@@ -303,7 +308,7 @@ function getNextNote(pitch) {
     }
 }
 
-// NOT SURE HOW THIS WILL BE USED YET
+// perplexity(): calculates the perplexity of the given input
 function perplexity(corpus) {
     prob = [];
     m = 0;
@@ -314,6 +319,7 @@ function perplexity(corpus) {
     return 2 ** ((-1 / m) * sum(prob));
 }
 
+// sequenceTrigramLogprob(): gets the logprob of the sequence
 function sequenceTrigramLogprob(sequence) {
     counts = getNGramCounts(noteList);
     prob = [];
@@ -326,6 +332,7 @@ function sequenceTrigramLogprob(sequence) {
     return sum(prob);
 }
 
+// smoothedTrigramProbability(): smooths the probability of the given trigram
 function smoothedTrigramProbability(trigram) {
     counts = getNGramCounts(noteList);
     lambda = [1 / 3.0, 1 / 3.0, 1 / 3.0];
@@ -335,10 +342,7 @@ function smoothedTrigramProbability(trigram) {
     return a + b + c;
 }
 
-/*
- * Deals with playing a note
- */
-
+// playNote(): plays a note
 function playNote(note) {
     if (mode == "single") {
         playNoteSingle(note);
@@ -358,6 +362,7 @@ function playNote(note) {
     }
 }
 
+// playNoteSingle(): plays a single note
 function playNoteSingle(note) {
     const gainNode = audioCtx.createGain();
     gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
@@ -389,6 +394,7 @@ function playNoteSingle(note) {
     gainNode.gain.setTargetAtTime(0.8 / gainNodes, note.startTime + offset, 0.01);
 }
 
+// playNoteAdditive(): plays a note with additive synthesis
 function playNoteAdditive(note) {
     activeGainNodes[note] = [];
     activeOscillators[note] = [];
@@ -424,6 +430,7 @@ function playNoteAdditive(note) {
     }
 }
 
+// playNoteAM(): plays a note with amplitude modulation
 function playNoteAM(note) {
     let carrier = audioCtx.createOscillator();
     let modulatorFreq = audioCtx.createOscillator();
@@ -463,6 +470,7 @@ function playNoteAM(note) {
     gainNode.gain.setTargetAtTime(0.8 / gainNodes, note.startTime + offset, 0.1);
 }
 
+// playNoteFM(): plays a note with frequency modulation
 function playNoteFM(note) {
     let modulatorFreq = audioCtx.createOscillator();
     modulatorFreq.frequency.value = modulatorFrequencyValue;
@@ -501,6 +509,7 @@ function playNoteFM(note) {
     gainNode.gain.setTargetAtTime(0.8 / gainNodes, note.startTime + offset, 0.1);
 }
 
+// stopNote(): stops the current note
 function stopNote(note) {
     for (let i = 0; i < activeGainNodes[note].length; i++) {
         activeGainNodes[note][i].gain.cancelScheduledValues(note.endTime + offset - 0.05);
@@ -517,10 +526,7 @@ function stopNote(note) {
     delete activeOscillators[note];
 }
 
-/*
- * helper methods
- */
-
+// multplyMatrices(): multiplies two mtrices
 function multiplyMatrices(m1, m2) {
     let dim = [m1.length, m2[0].length];
     let product = makeZeroSquareMatrix(dim[0], dim[1]);
@@ -534,6 +540,7 @@ function multiplyMatrices(m1, m2) {
     return product;
 }
 
+// makeZeroSquareMatrix(): makes a zero matrix of size n0 x n1
 function makeZeroSquareMatrix(n0, n1) {
     m = [];
     for (i = 0; i < n0; i++) {
@@ -543,6 +550,7 @@ function makeZeroSquareMatrix(n0, n1) {
     return m;
 }
 
+// makeZeroCubeMatrix(): makes a zero matrix of size n0 x n1 x n2
 function makeZeroCubeMatrix(n0, n1, n2) {
     m0 = [];
     for (i = 0; i < n0; i++) {
@@ -556,6 +564,7 @@ function makeZeroCubeMatrix(n0, n1, n2) {
     return m0;
 }
 
+// makeIdentityMatrix(): makes an identity matrix
 function makeIdentityMatrix(size) {
     m = makeZeroSquareMatrix(size, size);
     for (i = 0; i < size; i++) {
@@ -564,6 +573,7 @@ function makeIdentityMatrix(size) {
     return m;
 }
 
+// sum(): calculates the sum of the array
 function sum(arr) {
     s = 0;
     for (i = 0; i < arr.length; i++) {
