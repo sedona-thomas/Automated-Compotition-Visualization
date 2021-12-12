@@ -163,6 +163,7 @@ function processText(rawInput) {
         note.startTime = Math.floor(note.startTime * 10) / 10;
         note.endTime = Math.floor(note.endTime * 10) / 10;
     });
+    output.totalTime = Math.floor(output.totalTime * 10) / 10;
     console.log("processText() output: ", output)
     return output;
 }
