@@ -134,7 +134,7 @@ function processText(rawInput) {
             new_note.startTime = timeElapsed
 
             // Look at word length. 
-            let note_duration = word.length / Math.floor(AVERAGE_WORD_LENGTH * DEFAULT_NOTE_LENGTH);
+            let note_duration = word.length / AVERAGE_WORD_LENGTH * DEFAULT_NOTE_LENGTH;
             timeElapsed += note_duration;
             new_note.endTime = timeElapsed;
 
@@ -159,6 +159,10 @@ function processText(rawInput) {
         }
     }
     let output = { notes, totalTime: timeElapsed }
+    output.notes.forEach(note => {
+        note.startTime = Math.floor(note.startTime);
+        note.endTime = Math.floor(note.endTime);
+    });
     console.log("processText() output: ", output)
     return output;
 }
