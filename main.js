@@ -162,6 +162,8 @@ function visualize(notesList) {
     radialPattern(canvasCtx, size, notesList);
 }
 
+// TODO: Add more options for patterns.
+
 // radialPattern(): creates a tree ring pattern for a series of notes
 function radialPattern(canvasCtx, size, notesList) {
     gradient = canvasCtx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
