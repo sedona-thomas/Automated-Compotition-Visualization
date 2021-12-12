@@ -134,9 +134,9 @@ function processText(rawInput) {
             new_note.startTime = timeElapsed
 
             // Look at word length. 
-            let note_duration = word.length / AVERAGE_WORD_LENGTH * DEFAULT_NOTE_LENGTH
-            timeElapsed += note_duration
-            new_note.endTime = timeElapsed
+            let note_duration = word.length / Math.floor(AVERAGE_WORD_LENGTH * DEFAULT_NOTE_LENGTH);
+            timeElapsed += note_duration;
+            new_note.endTime = timeElapsed;
 
             // Determine pitch by the first letter of the word (mapping it onto a set range of frequencies.)
             // Distance from "m." 
