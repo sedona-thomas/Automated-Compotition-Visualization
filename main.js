@@ -109,6 +109,7 @@ function playNotes(notes) {
 // automateComposition(): creates the series of notes to play
 function automateComposition(notes) {
     let markovNotes = processMarkov(notes);
+    console.log(markovNotes);
     return markovNotes;
 }
 
@@ -118,32 +119,34 @@ function processText(rawInput) {
     notes = []
     const wordsArray = rawInput.split(" ")
     for (let word of wordsArray) {
-        new_note = {}
-        new_note.startTime = timeElapsed
+        if (word.length > 0) {
+            new_note = {}
+            new_note.startTime = timeElapsed
 
-        // Look at word length. 
-        let note_duration = word.length / AVERAGE_WORD_LENGTH * DEFAULT_NOTE_LENGTH
-        timeElapsed += note_duration
-        new_note.endTime = timeElapsed
+            // Look at word length. 
+            let note_duration = word.length / AVERAGE_WORD_LENGTH * DEFAULT_NOTE_LENGTH
+            timeElapsed += note_duration
+            new_note.endTime = timeElapsed
 
-        // Determine pitch by the first letter of the word (mapping it onto a set range of frequencies.)
-        // Distance from "m." 
-        // "m" maps to middle C perfectly. 
-        console.log("word:", word)
-        let d = word[0].toLowerCase().charCodeAt(0) - "m".charCodeAt(0)
-        new_note.pitch = BASE_PITCH + d
+            // Determine pitch by the first letter of the word (mapping it onto a set range of frequencies.)
+            // Distance from "m." 
+            // "m" maps to middle C perfectly. 
+            console.log("word:", word)
+            let d = word[0].toLowerCase().charCodeAt(0) - "m".charCodeAt(0)
+            new_note.pitch = BASE_PITCH + d
 
-        // Determine gap between words by looking if the word ends in punctuation.
-        // Assume the input is grammatically correct for now (no period, comma, semicolon, colon, question mark, or exclamation mark without a space).
-        // TODO(?): Account for punctuation in the middle of an input (like "wo,rd wo!rd wo.rd"). 
-        let last_char = word.charAt(word.length - 1)
-        if (PUNCTUATION_MARKS.includes(last_char)) {
-            timeElapsed += PUNCTUATION_MARKS.indexOf(last_char) * PUNCTUATION_INCREMENT
+            // Determine gap between words by looking if the word ends in punctuation.
+            // Assume the input is grammatically correct for now (no period, comma, semicolon, colon, question mark, or exclamation mark without a space).
+            // TODO(?): Account for punctuation in the middle of an input (like "wo,rd wo!rd wo.rd"). 
+            let last_char = word.charAt(word.length - 1)
+            if (PUNCTUATION_MARKS.includes(last_char)) {
+                timeElapsed += PUNCTUATION_MARKS.indexOf(last_char) * PUNCTUATION_INCREMENT
+            }
+
+            // TODO: Incorporate POS tagging. 
+
+            notes.push(new_note)
         }
-
-        // TODO: Incorporate POS tagging. 
-
-        notes.push(new_note)
     }
     let output = { notes, totalTime: timeElapsed }
     console.log("processText() output: ", output)
@@ -210,9 +213,9 @@ function getStates(noteList) {
     }
 }
 
-// processMarkov(): generates a series of notes using a markov chain
+// processMarkov(): generates a series of notes using a markov chain trained with Twinkle Twinkle Little Star
 function processMarkov(notes) {
-    makeMarkovChain(notes);
+    makeMarkovChain(TWINKLE_TWINKLE);
     let song = genNotes(notes);
     return song;
 }
@@ -250,6 +253,17 @@ function makeMarkovChainOrderN() {
     markovChain = makeIdentityMatrix(Object.keys(states).length);
     for (i = 0; i < order; i++) {
         markovChain = multiplyMatrices(markovChain, markovChain_order1);
+    }
+}
+
+// makeMarkovChainSmoothedTrigram(): creates markov chain of order 3 with smoothed probabilities
+function makeMarkovChainSmoothedTrigram() {
+    numOfNotes = Object.keys(states).length;
+    markovChain_order1 = makeZeroSquareMatrix(numOfNotes, numOfNotes);
+    trigrams = getNGramCounts(noteList)[2];
+    for (i = 0; i < trigrams.length; i++) {
+        trigram = trigrams[i];
+        markovChain[trigram[1]][trigram[2]] = smoothedTrigramProbability(trigram);
     }
 }
 
