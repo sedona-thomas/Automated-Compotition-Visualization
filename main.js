@@ -86,10 +86,8 @@ const DRAW_TIME_OFFSET = 1000
 
 const playExampleButton = document.getElementById("play_example");
 playExampleButton.addEventListener('click', function () {
-    let notes = processText(SHAKESPEARE);
-    let fullNotesList = automateComposition(notes);
-    playNotes(fullNotesList);
-    visualize(fullNotesList);
+    audioCtx = new (window.AudioContext || window.webkitAudioContext);
+    play(SHAKESPEARE);
 }, false);
 
 const textButton = document.getElementById("submit_text");
