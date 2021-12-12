@@ -245,7 +245,8 @@ function genNotes(noteList) {
 function makeMarkovChain(noteList) {
     getStates(noteList);
     makeMarkovChainOrder1(noteList);
-    makeMarkovChainOrderN();
+    //makeMarkovChainOrderN();
+    makeMarkovChainSmoothedTrigram(noteList);
 }
 
 // makeMarkovChainOrderN(): creates markov chain of the current specified order
@@ -253,17 +254,6 @@ function makeMarkovChainOrderN() {
     markovChain = makeIdentityMatrix(Object.keys(states).length);
     for (i = 0; i < order; i++) {
         markovChain = multiplyMatrices(markovChain, markovChain_order1);
-    }
-}
-
-// makeMarkovChainSmoothedTrigram(): creates markov chain of order 3 with smoothed probabilities
-function makeMarkovChainSmoothedTrigram() {
-    numOfNotes = Object.keys(states).length;
-    markovChain_order1 = makeZeroSquareMatrix(numOfNotes, numOfNotes);
-    trigrams = getNGramCounts(noteList)[2];
-    for (i = 0; i < trigrams.length; i++) {
-        trigram = trigrams[i];
-        markovChain[trigram[1]][trigram[2]] = smoothedTrigramProbability(trigram);
     }
 }
 
