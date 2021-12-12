@@ -245,8 +245,7 @@ function genNotes(noteList) {
 function makeMarkovChain(noteList) {
     getStates(noteList);
     makeMarkovChainOrder1(noteList);
-    //makeMarkovChainOrderN();
-    makeMarkovChainSmoothedTrigram(noteList);
+    makeMarkovChainOrderN();
 }
 
 // makeMarkovChainOrderN(): creates markov chain of the current specified order
