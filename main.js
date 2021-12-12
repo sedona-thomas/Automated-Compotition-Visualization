@@ -160,8 +160,8 @@ function processText(rawInput) {
     }
     let output = { notes, totalTime: timeElapsed }
     output.notes.forEach(note => {
-        note.startTime = Math.floor(note.startTime);
-        note.endTime = Math.floor(note.endTime);
+        note.startTime = Math.floor(note.startTime * 10) / 10;
+        note.endTime = Math.floor(note.endTime * 10) / 10;
     });
     console.log("processText() output: ", output)
     return output;
