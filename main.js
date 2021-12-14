@@ -58,6 +58,8 @@ const TRAINING_TEXT = "mmmmm lllll ppppp"
 // Middle C. 
 const BASE_PITCH = 60;
 
+// const sequenceRowsContainer = document.getElementById("sequence-rows")
+
 var text = "hello world";
 var trainingNotes = processText(TRAINING_TEXT);
 var sequence_length = 20;
@@ -109,6 +111,15 @@ function play(textInput) {
 
 // playNotes(): plays the inputted series of notes
 function playNotes(notes) {
+    // // Add starting text.
+    // newSequenceRow = document.createElement("div")
+    // newSequenceRow.classList.add("row")
+    // newSequenceRow.classList.add("sequences")
+    // newSequenceText = document.createElement("p")
+    // newSequenceText = "> Playing text processing... "
+    // newSequenceRow.appendChild(newSequenceText)
+    // sequenceRowsContainer.appendChild(newSequenceRow)
+
     notes.notes.forEach(note => {
         playNote(note);
     });
@@ -151,7 +162,7 @@ function processText(rawInput) {
                 timeElapsed += PUNCTUATION_MARKS.indexOf(last_char) * PUNCTUATION_INCREMENT
             }
 
-            // TODO: Incorporate POS tagging. 
+            new_note.generated = "text"
 
             notes.push(new_note)
         }
@@ -174,6 +185,13 @@ function visualize(notesList) {
     getStates(notesList);
     radialPattern(canvasCtx, size, notesList);
 }
+
+// function changeDisplay(note_i, time) {
+//     console.log("time: ", time)
+//     setTimeout(function () {
+        
+//     }, time);
+// }
 
 // TODO: Add more options for patterns.
 
@@ -249,6 +267,7 @@ function genNotes(noteList) {
         newNoteCopy.pitch = getNextNote(noteList.notes[i - 1]);
         newNoteCopy.startTime = currentEnd;
         newNoteCopy.endTime = currentEnd + note_length;
+        newNoteCopy.generated = "markov"
         newNotes.notes.push(newNoteCopy);
         newNotes.totalTime = currentEnd + note_length;
         currentEnd += note_length
