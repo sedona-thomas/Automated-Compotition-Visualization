@@ -58,7 +58,7 @@ const TRAINING_TEXT = "mmmmm lllll ppppp"
 // Middle C. 
 const BASE_PITCH = 60;
 
-// const sequenceRowsContainer = document.getElementById("sequence-rows")
+const sequenceRowsContainer = document.getElementById("sequence-rows")
 
 var text = "hello world";
 var trainingNotes = processText(TRAINING_TEXT);
@@ -111,16 +111,21 @@ function play(textInput) {
 
 // playNotes(): plays the inputted series of notes
 function playNotes(notes) {
-    // // Add starting text.
-    // newSequenceRow = document.createElement("div")
-    // newSequenceRow.classList.add("row")
-    // newSequenceRow.classList.add("sequences")
-    // newSequenceText = document.createElement("p")
-    // newSequenceText = "> Playing text processing... "
-    // newSequenceRow.appendChild(newSequenceText)
-    // sequenceRowsContainer.appendChild(newSequenceRow)
-
+    generationMethod = ""
     notes.notes.forEach(note => {
+        console.log("note.generated: ", note.generated)
+        // If generation method changes, add new text.
+        if (note.generated != generationMethod) {
+            newSequenceRow = document.createElement("div")
+            newSequenceRow.classList.add("row")
+            newSequenceRow.classList.add("sequences")
+            newSequenceText = document.createElement("p")
+            newSequenceText.innerText = "> Playing " + note.generated + " processing... "
+            newSequenceRow.appendChild(newSequenceText)
+            sequenceRowsContainer.appendChild(newSequenceRow)
+
+            generationMethod = note.generated
+        }
         playNote(note);
     });
 }
@@ -189,7 +194,7 @@ function visualize(notesList) {
 // function changeDisplay(note_i, time) {
 //     console.log("time: ", time)
 //     setTimeout(function () {
-        
+
 //     }, time);
 // }
 
