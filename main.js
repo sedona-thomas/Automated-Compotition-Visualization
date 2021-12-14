@@ -113,24 +113,26 @@ function play(textInput) {
 function playNotes(notes) {
     generationMethod = ""
     notes.notes.forEach(note => {
-        console.log("note.generated: ", note.generated)
         // If generation method changes, add new text.
         if (note.generated != generationMethod) {
             let generatedText = note.generated
-            setTimeout(function() { 
-                newSequenceRow = document.createElement("div")
-                newSequenceRow.classList.add("row")
-                newSequenceRow.classList.add("sequences")
-                newSequenceText = document.createElement("p")
-                newSequenceText.innerText = "> Playing " + generatedText + " processing... "
-                newSequenceRow.appendChild(newSequenceText)
-                sequenceRowsContainer.appendChild(newSequenceRow)
-            }, note.startTime * 1000 + DRAW_TIME_OFFSET)
-            
+            addGenerationText(generatedText, note.startTime)
             generationMethod = note.generated
         }
         playNote(note);
     });
+}
+
+function addGenerationText(generatedText, startTime) {
+    setTimeout(function() { 
+        newSequenceRow = document.createElement("div")
+        newSequenceRow.classList.add("row")
+        newSequenceRow.classList.add("sequences")
+        newSequenceText = document.createElement("p")
+        newSequenceText.innerText = "> Playing " + generatedText + " processing... "
+        newSequenceRow.appendChild(newSequenceText)
+        sequenceRowsContainer.appendChild(newSequenceRow)
+    }, startTime * 1000 + DRAW_TIME_OFFSET)
 }
 
 // automateComposition(): creates the series of notes to play
@@ -193,13 +195,6 @@ function visualize(notesList) {
     getStates(notesList);
     radialPattern(canvasCtx, size, notesList);
 }
-
-// function changeDisplay(note_i, time) {
-//     console.log("time: ", time)
-//     setTimeout(function () {
-
-//     }, time);
-// }
 
 // TODO: Add more options for patterns.
 
@@ -389,6 +384,7 @@ function smoothedTrigramProbability(trigram) {
 
 // playNote(): plays a note
 function playNote(note) {
+    visualizeNote(note)
     if (mode == "single") {
         playNoteSingle(note);
     }
@@ -405,6 +401,10 @@ function playNote(note) {
     if (activeOscillators[note]) {
         stopNote(note);
     }
+}
+
+function visualizeNote(note) {
+
 }
 
 // playNoteSingle(): plays a single note
