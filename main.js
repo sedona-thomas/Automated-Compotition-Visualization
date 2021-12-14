@@ -116,14 +116,17 @@ function playNotes(notes) {
         console.log("note.generated: ", note.generated)
         // If generation method changes, add new text.
         if (note.generated != generationMethod) {
-            newSequenceRow = document.createElement("div")
-            newSequenceRow.classList.add("row")
-            newSequenceRow.classList.add("sequences")
-            newSequenceText = document.createElement("p")
-            newSequenceText.innerText = "> Playing " + note.generated + " processing... "
-            newSequenceRow.appendChild(newSequenceText)
-            sequenceRowsContainer.appendChild(newSequenceRow)
-
+            let generatedText = note.generated
+            setTimeout(function() { 
+                newSequenceRow = document.createElement("div")
+                newSequenceRow.classList.add("row")
+                newSequenceRow.classList.add("sequences")
+                newSequenceText = document.createElement("p")
+                newSequenceText.innerText = "> Playing " + generatedText + " processing... "
+                newSequenceRow.appendChild(newSequenceText)
+                sequenceRowsContainer.appendChild(newSequenceRow)
+            }, note.startTime * 1000 + DRAW_TIME_OFFSET)
+            
             generationMethod = note.generated
         }
         playNote(note);
