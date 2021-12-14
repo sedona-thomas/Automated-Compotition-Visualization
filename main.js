@@ -129,7 +129,7 @@ function addGenerationText(generatedText, startTime) {
         newSequenceRow.classList.add("row")
         newSequenceRow.classList.add("sequences")
         newSequenceText = document.createElement("p")
-        newSequenceText.innerText = "> Playing " + generatedText + " processing... "
+        newSequenceText.innerText = "> Playing " + generatedText + " processing..."
         newSequenceRow.appendChild(newSequenceText)
         sequenceRowsContainer.appendChild(newSequenceRow)
     }, startTime * 1000 + DRAW_TIME_OFFSET)
@@ -404,7 +404,14 @@ function playNote(note) {
 }
 
 function visualizeNote(note) {
+    setTimeout(function() { 
+        let rowsList = document.getElementsByClassName("sequences")
+        // Append to most recent sequence.
+        currentRow = rowsList[rowsList.length - 1]
 
+        // TODO: Map to musical notes.
+        currentRow.innerText += " " + note.pitch
+    }, note.startTime * 1000 + DRAW_TIME_OFFSET)
 }
 
 // playNoteSingle(): plays a single note
