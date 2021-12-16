@@ -19,6 +19,8 @@ const TWINKLE_TWINKLE = {
 };
 
 const SHAKESPEARE = "From fairest creatures we desire increase, That thereby beauty's rose might never die, But as the riper should by time decease, His tender heir might bear his memory: But thou contracted to thine own bright eyes, Feed'st thy light's flame with self-substantial fuel";
+const PLACEHOLDER = "this is going to be some sample text"
+const TAYLOR_SWIFT = "She wears high heels, I wear sneakers/ She's Cheer Captain and I'm on the bleachers/ Dreaming about the day when you wake up and find/ That what you're looking for has been here the whole time"
 
 const CSS_COLOR_NAMES = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure",
     "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown",
@@ -47,8 +49,8 @@ const CSS_COLOR_NAMES = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azu
 
 // Ordered in how long you would pause after each one (increasing in time).
 // TODO: Include ellipsis? "..."
-const PUNCTUATION_MARKS = ["—", ",", ";", ":", "!", "?", "."]
-const PUNCTUATION_INCREMENT = 0.1
+const PUNCTUATION_MARKS = ["'", "’", "—", ",", "/", ";", ":", "!", "?", "."]
+const PUNCTUATION_INCREMENT = 0.05
 // 120 bpm is moderate tempo. Assume 4/4 time signature; each quarter note lasts 0.5 seconds.
 const DEFAULT_NOTE_LENGTH = 0.5
 // Average word length: 4.79 letters (http://norvig.com/mayzner.html) -- round up to 5.
@@ -88,10 +90,22 @@ var lfoFreq = 2;
 // It takes a while for sound to start playing, so this syncs up sound/visuals.
 const DRAW_TIME_OFFSET = 1000
 
-const playExampleButton = document.getElementById("play_example");
-playExampleButton.addEventListener('click', function () {
+const playExample1Button = document.getElementById("play_example_1");
+playExample1Button.addEventListener('click', function () {
     audioCtx = new (window.AudioContext || window.webkitAudioContext);
     play(SHAKESPEARE);
+}, false);
+
+const playExample2Button = document.getElementById("play_example_2");
+playExample2Button.addEventListener('click', function () {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext);
+    play(PLACEHOLDER);
+}, false);
+
+const playExample3Button = document.getElementById("play_example_3");
+playExample3Button.addEventListener('click', function () {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext);
+    play(TAYLOR_SWIFT);
 }, false);
 
 const textButton = document.getElementById("submit_text");
@@ -106,6 +120,7 @@ textButton.addEventListener('click', function () {
 
 // play(): processes text input, performs automated composition, and plays with visuals
 function play(textInput) {
+    addIntroText(textInput)
     let notes = processText(textInput);
     let fullNotesList = automateComposition(notes);
     playNotes(fullNotesList);
@@ -124,6 +139,19 @@ function playNotes(notes) {
         }
         playNote(note);
     });
+}
+
+function addIntroText(text) {
+    newSequenceRow = document.createElement("div")
+    newSequenceRow.classList.add("row")
+    newSequenceRow.classList.add("intro-text")
+    introText = document.createElement("b")
+    introText.innerText = "> Analyzing the following text: " 
+    newSequenceText = document.createElement("p")
+    newSequenceText.innerText = text
+    newSequenceRow.appendChild(introText)
+    newSequenceRow.appendChild(newSequenceText)
+    sequenceRowsContainer.appendChild(newSequenceRow)
 }
 
 function addGenerationText(generatedText, startTime) {
