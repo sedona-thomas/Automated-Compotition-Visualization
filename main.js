@@ -248,22 +248,23 @@ function processText(rawInput) {
     return output;
 }
 
+// adjustPerplexity(): fixes the mode and lfo for the current perplexity
 function adjustPerplexity(output) {
     if (output.notes.length >= 3) {
         // Use perplexity of text generated notes to determine synthesis type and LFO
         // Perplexity evaluates how well the model predicts an input
         notePerplexity = perplexity(output);
         console.log("perplexity: ", notePerplexity)
-        if (notePerplexity < 0.05) {
+        if (notePerplexity < 0.02) {
             mode = 'single';
             lfo = false;
-        } else if (notePerplexity < 0.1) {
+        } else if (notePerplexity < 0.05) {
             mode = 'am';
             lfo = false;
-        } else if (notePerplexity < 0.15) {
+        } else if (notePerplexity < 0.07) {
             mode = 'fm';
             lfo = false;
-        } else if (notePerplexity < 0.2) {
+        } else if (notePerplexity < 0.1) {
             mode = 'am';
             lfo = true;
         } else {
