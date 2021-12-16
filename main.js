@@ -149,7 +149,27 @@ function processText(rawInput) {
     timeElapsed = 0.0
     notes = []
     const wordsArray = rawInput.split(" ")
-    getLetterDiversity(wordsArray)
+    letterDiversity = getLetterDiversity(wordsArray)
+
+    // Use letter diversity to determine waveform type.
+    if (letterDiversity >= 0 && letterDiversity < 0.2) {
+        // Based on test inputs, very unlikely to happen with natural text (and more like "aaa").
+        console.log("triangle: ", letterDiversity)
+        waveform = "triangle"
+    } else if (letterDiversity < 0.3) {
+        // Based on test inputs, unlikely to happen with natural text (and more like "abbabababa").
+        console.log("square: ", letterDiversity)
+        waveform = "square"
+    } else if (letterDiversity < 0.35) {
+        // Based on test inputs, most values fall into this range between 0.34 and 0.36. 
+        // So it will vary between playing sine and sawtooth most often. 
+        console.log("sawtooth: ", letterDiversity)
+        waveform = "sawtooth"
+    } else {
+        console.log("sine: ", letterDiversity)
+        waveform = "sine" 
+    }
+
     for (let word of wordsArray) {
         // TODO: Put additive synthesis if the word starts with a capital letter.
         if (word.length > 0) {
