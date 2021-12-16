@@ -197,55 +197,18 @@ function visualize(notesList) {
     if (gradientPatternSelector.value == "radial") {
         radialPattern(canvasCtx, size, notesList);   
     } else if (gradientPatternSelector.value == "diagonal") {
-        diagonalPattern(canvasCtx, size, notesList)
+        linearPattern(canvasCtx, size, size, notesList)
     } else if (gradientPatternSelector.value == "horizontal") {
-        horizontalLinearPattern(canvasCtx, size, notesList)
+        linearPattern(canvasCtx, 0, size, notesList)
     } else {
-        verticalLinearPattern(canvasCtx, size, notesList)
+        linearPattern(canvasCtx, size, 0, notesList)
     }
 }
 
-// diagonalPattern(): creates a diagonal gradient pattern for a series of notes
-function diagonalPattern(canvasCtx, size, notesList) {
-    gradient = canvasCtx.createLinearGradient(0, 0, size, size);
-    increment = 10;
-    interval = 1 / (notesList.notes.length + 1);
-    colors = getColors(Object.keys(states).length);
-    for (i = 0; i < notesList.notes.length; i++) {
-        let pitch = notesList.notes[i].pitch
-        let startTime = notesList.notes[notesList.notes.length - i - 1].startTime * 1000 + DRAW_TIME_OFFSET
-        let gradientInterval = i * interval
-        setTimeout(function () {
-            gradient.addColorStop(gradientInterval, getColor(colors, pitch));
-            canvasCtx.fillStyle = gradient;
-            canvasCtx.fillRect(0, 0, size, size);
-            console.log("timing out");
-        }, startTime);
-    }
-}
-
-// horizontalLinearPattern(): creates a linear gradient pattern (horizontal lines) for a series of notes
-function horizontalLinearPattern(canvasCtx, size, notesList) {
-    gradient = canvasCtx.createLinearGradient(0, 0, 0, size);
-    increment = 10;
-    interval = 1 / (notesList.notes.length + 1);
-    colors = getColors(Object.keys(states).length);
-    for (i = 0; i < notesList.notes.length; i++) {
-        let pitch = notesList.notes[i].pitch
-        let startTime = notesList.notes[notesList.notes.length - i - 1].startTime * 1000 + DRAW_TIME_OFFSET
-        let gradientInterval = i * interval
-        setTimeout(function () {
-            gradient.addColorStop(gradientInterval, getColor(colors, pitch));
-            canvasCtx.fillStyle = gradient;
-            canvasCtx.fillRect(0, 0, size, size);
-            console.log("timing out");
-        }, startTime);
-    }
-}
-
-// verticalLinearPattern(): creates a linear gradient pattern (vertical lines) for a series of notes
-function verticalLinearPattern(canvasCtx, size, notesList) {
-    gradient = canvasCtx.createLinearGradient(0, 0, size, 0);
+// linearPattern(): creates a linear gradient pattern for a series of notes. 
+// Depending on inputs, will draw diagonal, horizontal, or vertical lines. 
+function linearPattern(canvasCtx, endX, endY, notesList) {
+    gradient = canvasCtx.createLinearGradient(0, 0, endX, endY);
     increment = 10;
     interval = 1 / (notesList.notes.length + 1);
     colors = getColors(Object.keys(states).length);
