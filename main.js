@@ -57,6 +57,7 @@ const AVERAGE_WORD_LENGTH = 5
 const TRAINING_TEXT = "mmmmm lllll ppppp"
 // Middle C. 
 const BASE_PITCH = 60;
+const ALPHABET_SIZE = 26;
 
 const sequenceRowsContainer = document.getElementById("sequence-rows")
 const gradientPatternSelector = document.getElementById("gradients")
@@ -148,7 +149,9 @@ function processText(rawInput) {
     timeElapsed = 0.0
     notes = []
     const wordsArray = rawInput.split(" ")
+    getLetterDiversity(wordsArray)
     for (let word of wordsArray) {
+        // TODO: Put additive synthesis if the word starts with a capital letter.
         if (word.length > 0) {
             new_note = {}
             new_note.startTime = timeElapsed
@@ -328,6 +331,21 @@ function makeMarkovChainOrder1(noteList) {
     for (i = 0; i < numOfNotes; i++) {
         for (j = 0; j < numOfNotes; j++) {
             markovChain_order1[i][j] = counts[1][i][j] / counts[0][i];
+        }
+    }
+}
+
+// getLetterDiversity(): calculates the "diversity" of the letters in a list of words. 
+function getLetterDiversity(wordList) {
+    // Initialize an array of 26 zeroes to store letter counts.
+    const letterCounts = []
+    for (let i = 0; i < ALPHABET_SIZE; i++) {
+        letterCounts.push(0)
+    }
+
+    for (let word of wordList) {
+        for (let letter of word) {
+            console.log(letter)
         }
     }
 }
