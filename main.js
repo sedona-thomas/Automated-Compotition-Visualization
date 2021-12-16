@@ -146,7 +146,7 @@ function addIntroText(text) {
     newSequenceRow.classList.add("row")
     newSequenceRow.classList.add("intro-text")
     introText = document.createElement("b")
-    introText.innerText = "> Analyzing the following text: " 
+    introText.innerText = "> Analyzing the following text: "
     newSequenceText = document.createElement("p")
     newSequenceText.innerText = text
     newSequenceRow.appendChild(introText)
@@ -155,7 +155,7 @@ function addIntroText(text) {
 }
 
 function addGenerationText(generatedText, startTime) {
-    setTimeout(function() { 
+    setTimeout(function () {
         newSequenceRow = document.createElement("div")
         newSequenceRow.classList.add("row")
         newSequenceRow.classList.add("sequences")
@@ -196,7 +196,7 @@ function processText(rawInput) {
         waveform = "sawtooth"
     } else {
         console.log("sine: ", letterDiversity)
-        waveform = "sine" 
+        waveform = "sine"
     }
 
     for (let word of wordsArray) {
@@ -251,7 +251,7 @@ function visualize(notesList) {
     canvasCtx = canvas.getContext("2d");
     getStates(notesList);
     if (gradientPatternSelector.value == "radial") {
-        radialPattern(canvasCtx, size, notesList);   
+        radialPattern(canvasCtx, size, notesList);
     } else if (gradientPatternSelector.value == "diagonal") {
         linearPattern(canvasCtx, size, size, notesList)
     } else if (gradientPatternSelector.value == "horizontal") {
@@ -406,16 +406,16 @@ function getLetterDiversity(wordList) {
             let index = letter.toLowerCase().charCodeAt(0) - "a".charCodeAt(0)
             // Ignore punctuation; if it's not a letter, then do not count it. 
             if (index >= 0 && index < 26) {
-                letterCounts[index] += 1 
+                letterCounts[index] += 1
                 totalLetterCounts += 1
-            } 
+            }
         }
     }
 
     let letterDiversityScore = 1
     for (let value of letterCounts) {
         // console.log("value: ", value)
-        letterDiversityScore *= (1-value/totalLetterCounts)
+        letterDiversityScore *= (1 - value / totalLetterCounts)
         // console.log("letter diversity score: ", letterDiversityScore)
     }
 
@@ -521,7 +521,7 @@ function playNote(note) {
 }
 
 function visualizeNote(note) {
-    setTimeout(function() { 
+    setTimeout(function () {
         let rowsList = document.getElementsByClassName("sequences")
         // Append to most recent sequence.
         currentRow = rowsList[rowsList.length - 1]
