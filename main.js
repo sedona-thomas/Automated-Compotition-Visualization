@@ -141,6 +141,7 @@ function playNotes(notes) {
     });
 }
 
+// addIntroText(): adds text to be analyzed to the page
 function addIntroText(text) {
     newSequenceRow = document.createElement("div")
     newSequenceRow.classList.add("row")
@@ -154,6 +155,7 @@ function addIntroText(text) {
     sequenceRowsContainer.appendChild(newSequenceRow)
 }
 
+// addGenerationText(): prints note sequence generated to page
 function addGenerationText(generatedText, startTime) {
     setTimeout(function () {
         newSequenceRow = document.createElement("div")
@@ -169,7 +171,6 @@ function addGenerationText(generatedText, startTime) {
 // automateComposition(): creates the series of notes to play
 function automateComposition(notes) {
     let markovNotes = processMarkov(notes);
-    console.log(markovNotes);
     return markovNotes;
 }
 
@@ -213,7 +214,6 @@ function processText(rawInput) {
             // Determine pitch by the first letter of the word (mapping it onto a set range of frequencies.)
             // Distance from "m." 
             // "m" maps to middle C perfectly. 
-            console.log("word:", word)
             let d = word[0].toLowerCase().charCodeAt(0) - "m".charCodeAt(0)
             new_note.pitch = BASE_PITCH + d
 
@@ -234,14 +234,46 @@ function processText(rawInput) {
             notes.push(new_note)
         }
     }
+
     let output = { notes, totalTime: timeElapsed }
     output.notes.forEach(note => {
         note.startTime = Math.floor(note.startTime * 10) / 10;
         note.endTime = Math.floor(note.endTime * 10) / 10;
     });
     output.totalTime = Math.floor(output.totalTime * 10) / 10;
-    console.log("processText() output: ", output)
+    console.log("processText() output: ", output);
+
+    adjustPerplexity(output);
+
     return output;
+}
+
+function adjustPerplexity(output) {
+    if (output.notes.length >= 3) {
+        // Use perplexity of text generated notes to determine synthesis type and LFO
+        // Perplexity evaluates how well the model predicts an input
+        notePerplexity = perplexity(output);
+        console.log("perplexity: ", notePerplexity)
+        if (notePerplexity < 0.05) {
+            mode = 'single';
+            lfo = false;
+        } else if (notePerplexity < 0.1) {
+            mode = 'am';
+            lfo = false;
+        } else if (notePerplexity < 0.15) {
+            mode = 'fm';
+            lfo = false;
+        } else if (notePerplexity < 0.2) {
+            mode = 'am';
+            lfo = true;
+        } else {
+            mode = 'fm';
+            lfo = true;
+        }
+    }
+
+    console.log("LFO: ", lfo);
+    console.log("Mode: ", mode);
 }
 
 // visualize(): visualizes series of notes as they play
@@ -414,9 +446,7 @@ function getLetterDiversity(wordList) {
 
     let letterDiversityScore = 1
     for (let value of letterCounts) {
-        // console.log("value: ", value)
         letterDiversityScore *= (1 - value / totalLetterCounts)
-        // console.log("letter diversity score: ", letterDiversityScore)
     }
 
     console.log("letter diversity score: ", letterDiversityScore)
@@ -425,6 +455,7 @@ function getLetterDiversity(wordList) {
 
 // getNGramCounts(): gets unigram, bigram, and trigram counts for a note list
 function getNGramCounts(noteList) {
+    getStates(noteList);
     numOfNotes = Object.keys(states).length;
     unigram_counts = new Array(numOfNotes).fill(0);
     bigram_counts = makeZeroSquareMatrix(numOfNotes, numOfNotes);
@@ -449,6 +480,33 @@ function getNGramCounts(noteList) {
     return [unigram_counts, bigram_counts, trigram_counts];
 }
 
+// getNGram(): gets unigrams, bigrams, and trigrams for a note list
+function getNGrams(noteList) {
+    getStates(noteList);
+    numOfNotes = Object.keys(states).length;
+    unigrams = [];
+    bigrams = [];
+    trigrams = [];
+    let i;
+    for (i = 0; i < noteList.notes.length - 2; i++) {
+        trigram = [states[noteList.notes[i].pitch], states[noteList.notes[i + 1].pitch], states[noteList.notes[i + 2].pitch]];
+        unigrams.push(trigram.slice(0, 1));
+        bigrams.push(trigram.slice(0, 2));
+        trigrams.push(trigram.slice(0, 3));
+    }
+    if (noteList.notes.length > 1) {
+        bigram = [states[noteList.notes[i].pitch], states[noteList.notes[i + 1].pitch]];
+        bigrams.push(bigram.slice(0, 2));
+        unigrams.push(bigram.slice(0, 1));
+        i++;
+    }
+    if (noteList.notes.length > 0) {
+        unigram = [states[noteList.notes[i].pitch]];
+        unigrams.push(unigram.slice(0, 1));
+    }
+    return [unigrams, bigrams, trigrams];
+}
+
 // getNextNote(): randomly generates a note given markov probabilities
 function getNextNote(pitch) {
     if (Object.keys(states).includes(pitch)) {
@@ -467,22 +525,19 @@ function getNextNote(pitch) {
 }
 
 // perplexity(): calculates the perplexity of the given input
-function perplexity(corpus) {
+function perplexity(noteList) {
     prob = [];
-    m = 0;
-    corpus.forEach(unit => {
-        m += len(unit) + 1
-        prob.push(sentenceTrigramLogprob(s))
-    });
-    return 2 ** ((-1 / m) * sum(prob));
+    prob.push(sequenceTrigramLogprob(noteList))
+    return 2 ** ((-1 / noteList.notes.length + 1) * sum(prob));
 }
 
 // sequenceTrigramLogprob(): gets the logprob of the sequence
-function sequenceTrigramLogprob(sequence) {
+function sequenceTrigramLogprob(noteList) {
     counts = getNGramCounts(noteList);
+    trigrams = getNGrams(noteList)[2];
     prob = [];
-    counts[2].forEach(t => {
-        p = smoothedTrigramProbability(t);
+    trigrams.forEach(trigram => {
+        p = smoothedTrigramProbability(noteList, trigram);
         if (p > 0) {
             prob.push(Math.log2(p));
         }
@@ -491,13 +546,13 @@ function sequenceTrigramLogprob(sequence) {
 }
 
 // smoothedTrigramProbability(): smooths the probability of the given trigram
-function smoothedTrigramProbability(trigram) {
+function smoothedTrigramProbability(noteList, trigram) {
     counts = getNGramCounts(noteList);
     lambda = [1 / 3.0, 1 / 3.0, 1 / 3.0];
     a = lambda[2] * counts[2][trigram[0]][trigram[1]][trigram[2]] / counts[1][trigram[0]][trigram[1]]
     b = lambda[1] * counts[1][trigram[0]][trigram[1]] / counts[0][trigram[0]]
     c = lambda[0] * counts[0][trigram[0]] / sum(counts[0]);
-    return a + b + c;
+    return Math.floor(100 * (a + b + c)) / 100;
 }
 
 // playNote(): plays a note
@@ -537,9 +592,6 @@ function playNoteSingle(note) {
     gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
 
     const osc = audioCtx.createOscillator();
-
-    console.log("note pitch: ", note.pitch);
-    console.log("translated to freq: ", midiToFreq(note.pitch));
 
     osc.frequency.setValueAtTime(midiToFreq(note.pitch), audioCtx.currentTime);
     osc.type = waveform;
@@ -760,39 +812,3 @@ function updatePartialDistance(value) { partialSize = value; };
 function updateFreq(value) { modulatorFrequencyValue = value; };
 function updateIndex(value) { modulationIndexValue = value; };
 function updateLfo(value) { lfoFreq = value; };
-
-
-/*
-const lengthButton = document.getElementById("submit_length");
-lengthButton.addEventListener('click', function () {
-    note_length = parseInt(document.getElementById('length').value);
-}, false);
-
-const seqLengthButton = document.getElementById("submit_seq_length");
-seqLengthButton.addEventListener('click', function () {
-    sequence_length = parseInt(document.getElementById('seq_length').value);
-}, false);
-
-const singleButton = document.getElementById("single");
-singleButton.addEventListener('click', function () { mode = 'single'; }, false);
-const additiveButton = document.getElementById("additive");
-additiveButton.addEventListener('click', function () { mode = 'additive'; }, false);
-const AMButton = document.getElementById("am");
-AMButton.addEventListener('click', function () { mode = 'am'; }, false);
-const FMButton = document.getElementById("fm");
-FMButton.addEventListener('click', function () { mode = 'fm'; }, false);
-
-const sineButton = document.getElementById("sine");
-sineButton.addEventListener('click', function () { waveform = 'sine'; }, false);
-const sawtoothButton = document.getElementById("sawtooth");
-sawtoothButton.addEventListener('click', function () { waveform = 'sawtooth'; }, false);
-const squareButton = document.getElementById("square");
-squareButton.addEventListener('click', function () { waveform = 'square'; }, false);
-const triangleButton = document.getElementById("triangle");
-triangleButton.addEventListener('click', function () { waveform = 'triangle'; }, false);
-
-const lfoOnButton = document.getElementById("lfoOn");
-lfoOnButton.addEventListener('click', function () { lfo = true; }, false);
-const lfoOffButton = document.getElementById("lfoOff");
-lfoOffButton.addEventListener('click', function () { lfo = false; }, false);
-*/
