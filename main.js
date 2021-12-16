@@ -336,6 +336,8 @@ function makeMarkovChainOrder1(noteList) {
 }
 
 // getLetterDiversity(): calculates the "diversity" of the letters in a list of words. 
+// Even if many letters aren't used, the input is considered "diverse" if the letters are distributed evenly.
+// The more diverse the word list, the higher the letter diversity score. 
 function getLetterDiversity(wordList) {
     // Initialize an array of 26 zeroes to store letter counts.
     const letterCounts = []
@@ -343,11 +345,28 @@ function getLetterDiversity(wordList) {
         letterCounts.push(0)
     }
 
+    totalLetterCounts = 0
     for (let word of wordList) {
         for (let letter of word) {
-            console.log(letter)
+            // Ignore case.
+            let index = letter.toLowerCase().charCodeAt(0) - "a".charCodeAt(0)
+            // Ignore punctuation; if it's not a letter, then do not count it. 
+            if (index >= 0 && index < 26) {
+                letterCounts[index] += 1 
+                totalLetterCounts += 1
+            } 
         }
     }
+
+    let letterDiversityScore = 1
+    for (let value of letterCounts) {
+        // console.log("value: ", value)
+        letterDiversityScore *= (1-value/totalLetterCounts)
+        // console.log("letter diversity score: ", letterDiversityScore)
+    }
+
+    console.log("letter diversity score: ", letterDiversityScore)
+    return letterDiversityScore
 }
 
 // getNGramCounts(): gets unigram, bigram, and trigram counts for a note list
