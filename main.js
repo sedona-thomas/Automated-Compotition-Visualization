@@ -59,6 +59,7 @@ const TRAINING_TEXT = "mmmmm lllll ppppp"
 const BASE_PITCH = 60;
 
 const sequenceRowsContainer = document.getElementById("sequence-rows")
+const gradientPatternSelector = document.getElementById("gradients")
 
 var text = "hello world";
 var trainingNotes = processText(TRAINING_TEXT);
@@ -193,10 +194,32 @@ function visualize(notesList) {
     canvas = document.getElementById("visualization");
     canvasCtx = canvas.getContext("2d");
     getStates(notesList);
-    radialPattern(canvasCtx, size, notesList);
+    if (gradientPatternSelector.value == "radial") {
+        radialPattern(canvasCtx, size, notesList);   
+    } else if (gradientPatternSelector.value == "diagonal") {
+        diagonalPattern(canvasCtx, size, notesList)
+    }
 }
 
-// TODO: Add more options for patterns.
+// diagonalPattern(): creates a diagonal gradient pattern for a series of notes
+function diagonalPattern(canvasCtx, size, notesList) {
+    gradient = canvasCtx.createLinearGradient(0, 0, size, size);
+    increment = 10;
+    interval = 1 / (notesList.notes.length + 1);
+    colors = getColors(Object.keys(states).length);
+    for (i = 0; i < notesList.notes.length; i++) {
+        let pitch = notesList.notes[i].pitch
+        let startTime = notesList.notes[notesList.notes.length - i - 1].startTime * 1000 + DRAW_TIME_OFFSET
+        let gradientInterval = i * interval
+        console.log("gradient interval: ", gradientInterval)
+        setTimeout(function () {
+            gradient.addColorStop(gradientInterval, getColor(colors, pitch));
+            canvasCtx.fillStyle = gradient;
+            canvasCtx.fillRect(0, 0, size, size);
+            console.log("timing out");
+        }, startTime);
+    }
+}
 
 // radialPattern(): creates a tree ring pattern for a series of notes
 function radialPattern(canvasCtx, size, notesList) {
