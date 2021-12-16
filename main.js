@@ -200,8 +200,8 @@ function processText(rawInput) {
     }
 
     for (let word of wordsArray) {
-        // TODO: Put additive synthesis if the word starts with a capital letter.
         if (word.length > 0) {
+            // TODO: Account for bad words (e.g., "hello . hello" or "wo,rd wo!rd wo.rd").
             new_note = {}
             new_note.startTime = timeElapsed
 
@@ -219,13 +219,17 @@ function processText(rawInput) {
 
             // Determine gap between words by looking if the word ends in punctuation.
             // Assume the input is grammatically correct for now (no period, comma, semicolon, colon, question mark, or exclamation mark without a space).
-            // TODO(?): Account for punctuation in the middle of an input (like "wo,rd wo!rd wo.rd"). 
             let last_char = word.charAt(word.length - 1)
             if (PUNCTUATION_MARKS.includes(last_char)) {
                 timeElapsed += PUNCTUATION_MARKS.indexOf(last_char) * PUNCTUATION_INCREMENT
             }
 
             new_note.generated = "text"
+
+            // Put additive synthesis if the word starts with a capital letter.
+            if (word.charAt(0) === word.charAt(0).toUpperCase()) {
+                new_note.capitalized = true
+            }
 
             notes.push(new_note)
         }
@@ -499,11 +503,10 @@ function smoothedTrigramProbability(trigram) {
 // playNote(): plays a note
 function playNote(note) {
     visualizeNote(note)
-    if (mode == "single") {
-        playNoteSingle(note);
-    }
-    else if (mode == "additive") {
+    if (note.capitalized == true) {
         playNoteAdditive(note);
+    } else if (mode == "single") {
+        playNoteSingle(note);
     }
     else if (mode == "am") {
         playNoteAM(note);
