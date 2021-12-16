@@ -85,7 +85,7 @@ var modulatorFrequencyValue = 100;
 var modulationIndexValue = 100;
 var lfoFreq = 2;
 
-// Not sure why it takes a while for sound to start playing but this syncs up sound/visuals.
+// It takes a while for sound to start playing, so this syncs up sound/visuals.
 const DRAW_TIME_OFFSET = 1000
 
 const playExampleButton = document.getElementById("play_example");
