@@ -338,6 +338,7 @@ function makeMarkovChainOrder1(noteList) {
 // getLetterDiversity(): calculates the "diversity" of the letters in a list of words. 
 // Even if many letters aren't used, the input is considered "diverse" if the letters are distributed evenly.
 // The more diverse the word list, the higher the letter diversity score. 
+// The letter diversity score ranges from 0 (if the input contains only one letter) to 0.5 (perfectly distributed between two letters).
 function getLetterDiversity(wordList) {
     // Initialize an array of 26 zeroes to store letter counts.
     const letterCounts = []
