@@ -98,6 +98,7 @@ const textButton = document.getElementById("submit_text");
 textButton.addEventListener('click', function () {
     audioCtx = new (window.AudioContext || window.webkitAudioContext);
     let textInput = document.getElementById("text").value
+    // TODO: Only allow one sound to play at a time (no sending in an input while the notes are playing).
     if (textInput.length > 0) {
         play(textInput);
     }
