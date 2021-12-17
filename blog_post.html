@@ -26,10 +26,26 @@
     <h3>
         Text processing
     </h3>
-    <p>Everything the computer produces is based on the initial text input from the user.</p>
+    <p>Everything the computer produces is based on the initial text input from the user. We then analyze the following
+        attributes to determine corresponding characteristics of sound and visuals produced: </p>
     <ul>
-        <li>Word length: </li>
-        <li>Punctuation: </li>
+        <li><b>Word length:</b> Of course, when someone is speaking, they can choose to speak as slowly or as quickly as
+            they
+            want to, so there is no fixed length for how long a word might last. To translate that to our computer
+            music, we looked at word length as it related to note length. Based on <a
+                href="http://norvig.com/mayzner.html">text processing research</a>, the average
+            length of a word is 4.79 letters (rounded up to 5 in the code, for convenience; the user will not be
+            inputting
+            words of length 4.79). In music, we assumed that "the average word" would correspond to "the average note":
+            a quarter note played in 4/4 time signature at "moderate tempo," which tops out at a convenient <a
+                href="https://www.masterclass.com/articles/music-101-what-is-tempo-how-is-tempo-used-in-music">120
+                bpm.</a> From our mathematical calculations, that means the average word (of five letters) would last
+            0.5 seconds in sound.</li>
+        <li><b>Punctuation:</b> Punctuation is used in speech and in writing often to separate or to create pauses.
+            Thus, it makes sense that translating an input with punctuation in it to sound would mean leaving in longer
+            gaps between notes where punctuation should be. Based on a subjective ranking of which punctuation marks
+            would create the longest pauses (for example, deciding that a dash would create a shorter gap between
+            words than a period). </li>
         <li>Letter diversity: </li>
         <li>Word length standard deviation: </li>
         <li>Perplexity: </li>
