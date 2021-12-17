@@ -13,6 +13,7 @@
     </h2>
 
     <p align="center">by Sedona Thomas and Carolyn Wang</p>
+    <p align="center"><a href="https://github.com/sedona-thomas/Automated-Compotition-Visualization">Github repo</a></p>
 
 
     <h3>
@@ -59,7 +60,14 @@
             change between the waveform types of square, triangle, sine, and sawtooth, with sine and sawtooth being the
             most likely for natural language inputs (those sound very different but also familiar, so the user can
             experience both and occasionally triangle and square, which they might not expect). </li>
-        <li>Word length standard deviation: </li>
+        <li><b>Capitalization: </b> We translated words that start with a capital letter into sound by playing them in
+            additive synthesis. If capitalization is often used to emphasize or signify importance, it makes sense that
+            the subsequent sound also seems emphasized by additional oscillators set at progressively increasing
+            octaves. </li>
+        <li><b>Word length standard deviation:</b> Using the <a
+                href="https://en.wikipedia.org/wiki/Standard_deviation">formula for standard deviation</a>, we
+            calculated the standard deviation of word lengths in the given text input to determine the number of
+            partials for words that used additive synthesis. </li>
         <li><b>Perplexity:</b> <a
                 href="https://towardsdatascience.com/perplexity-intuition-and-derivation-105dd481c8f3">Perplexity</a> is
             a natural language processing concept that measures
