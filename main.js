@@ -200,6 +200,9 @@ function processText(rawInput) {
         waveform = "sine"
     }
 
+    wordLengthStdDev = getWordLengthStdDev(wordsArray)
+    numberOfPartials = Math.floor(5 *wordLengthStdDev)
+
     for (let word of wordsArray) {
         if (word.length > 0) {
             // TODO: Account for bad words (e.g., "hello . hello" or "wo,rd wo!rd wo.rd").
