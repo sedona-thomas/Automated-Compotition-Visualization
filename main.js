@@ -282,7 +282,7 @@ function adjustPerplexity(output) {
 
 // visualize(): visualizes series of notes as they play
 function visualize(notesList) {
-    size = 500;
+    size = 600;
     canvas = document.getElementById("visualization");
     canvasCtx = canvas.getContext("2d");
     getStates(notesList);
