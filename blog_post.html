@@ -70,11 +70,10 @@
             partials for words that used additive synthesis. </li>
         <li><b>Perplexity:</b> <a
                 href="https://towardsdatascience.com/perplexity-intuition-and-derivation-105dd481c8f3">Perplexity</a> is
-            a natural language processing concept that measures
-            "how well a probability model predicts a sample." We incorporated this insight from our Markov model (see
-            more below) to control the synthesis type and
-            whether or not an LFO is enabled. Our design choice uses AM and FM synthesis as well as LFOs to make the
-            sound progressively more chaotic sounding as the perplexity value increases. </li>
+            a natural language processing concept that measures "how well a probability model predicts a sample." We
+            incorporated this insight from our Markov model (see more below) to control the synthesis type and whether
+            or not an LFO is enabled. Our design choice uses AM and FM synthesis as well as LFOs to make the sound
+            progressively more chaotic sounding as the perplexity value increases. </li>
     </ul>
     <p>Trial and error: letter diversity metric (which is self created).</p>
     <p>Choosing sample text options: </p>
@@ -97,7 +96,9 @@
         Our visualization takes in the finalize series of notes from the text processing and automated composition and
         generates a visual representation of the note sequence. A random set of CSS colors are selected, and each unique
         note pitch is mapped to each of the selected colors. Then, the visualizer progressively creates the pattern,
-        taking into account the note pitch for the color and the note length for the amount of color added.
+        taking into account the note pitch for the color and the note length for the amount of color added. Once we
+        learned how to create a canvas with the radial pattern, we began trying a variety of different visualization
+        patterns and settled on radial, diagonal, horizontal, and vertical.
     </p>
 
     <h3>
