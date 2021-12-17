@@ -46,17 +46,28 @@
             gaps between notes where punctuation should be. Based on a subjective ranking of which punctuation marks
             would create the longest pauses (for example, deciding that a dash would create a shorter gap between
             words than a period). </li>
-        <li>Letter diversity: </li>
+        <li><b>Letter diversity:</b> We created a measurement of letter diversity that we then used to determine
+            waveform type. In our measurement of letter diversity, an input is more diverse if the letters that it
+            contains are more evenly distributed. This metric only considers the letters that the input actually uses,
+            not the entire alphabet; thus, an input like "aaabb" would be considered evenly distributed and "diverse"
+            even though it does not use the entire alphabet. We measure letter diversity against the letters in the
+            actual input, as opposed to the whole alphabet, so as to not skew the results toward unlikely inputs that
+            happen to
+            contain every letter of the alphabet. (After all, natural text inputs rarely contain every single letter of
+            the alphabet.) The letter diversity calculation ignores punctuation and capitalization. The higher the
+            "letter diversity score," the more "diverse" we consider an input. Based on this letter diversity score, we
+            change between the waveform types of square, triangle, sine, and sawtooth, with sine and sawtooth being the
+            most likely for natural language inputs (those sound very different but also familiar, so the user can
+            experience both and occasionally triangle and square, which they might not expect). </li>
         <li>Word length standard deviation: </li>
-        <li>Perplexity: <a
+        <li><b>Perplexity:</b> <a
                 href="https://towardsdatascience.com/perplexity-intuition-and-derivation-105dd481c8f3">Perplexity</a> is
             a natural language processing concept that measures "how well a probability model predicts a sample." We
             incorporated this insight from our Markov model (see more below) to control the synthesis type and whether
             or not an LFO is enabled. Our design choice uses AM and FM synthesis as well as LFOs to make the sound
             progressively more chaotic sounding as the perplexity value increases. </li>
     </ul>
-    
-    <p>Trial and error.</p>
+    <p>Trial and error: letter diversity metric (which is self created).</p>
     <p>Choosing sample text options: </p>
 
     <h3>
@@ -94,9 +105,7 @@
 
     <h3>Miscellaneous</h3>
 
-    <p>
-
-    </p>
+    <p>Why don't we explain everything? LOL</p>
 
     <h3>Try It Out!</h3>
 
