@@ -68,7 +68,8 @@
         <li><b>Word length standard deviation:</b> Using the <a
                 href="https://en.wikipedia.org/wiki/Standard_deviation">formula for standard deviation</a>, we
             calculated the standard deviation of word lengths in the given text input to determine the number of
-            partials for words that used additive synthesis. </li>
+            partials for words that used additive synthesis. This was just a fun metric to implement, to add some
+            additional variation to the sound outputs of the processed text to surprise the user!</li>
         <li><b>Perplexity:</b> <a
                 href="https://towardsdatascience.com/perplexity-intuition-and-derivation-105dd481c8f3">Perplexity</a> is
             a natural language processing concept that measures "how well a probability model predicts a sample." We
@@ -94,7 +95,7 @@
     </h3>
 
     <p>
-        Our visualization takes in the finalize series of notes from the text processing and automated composition and
+        Our visualization takes in the finalized series of notes from the text processing and automated composition and
         generates a visual representation of the note sequence. A random set of CSS colors are selected, and each unique
         note pitch is mapped to each of the selected colors. Then, the visualizer progressively creates the pattern,
         taking into account the note pitch for the color and the note length for the amount of color added. Once we
