@@ -48,7 +48,6 @@ const CSS_COLOR_NAMES = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azu
 ];
 
 // Ordered in how long you would pause after each one (increasing in time).
-// TODO: Include ellipsis? "..."
 const PUNCTUATION_MARKS = ["'", "’", "—", ",", "/", ";", ":", "!", "?", "."]
 const PUNCTUATION_INCREMENT = 0.05
 // 120 bpm is moderate tempo. Assume 4/4 time signature; each quarter note lasts 0.5 seconds.
@@ -112,7 +111,6 @@ const textButton = document.getElementById("submit_text");
 textButton.addEventListener('click', function () {
     audioCtx = new (window.AudioContext || window.webkitAudioContext);
     let textInput = document.getElementById("text").value
-    // TODO: Only allow one sound to play at a time (no sending in an input while the notes are playing).
     if (textInput.length > 0) {
         play(textInput);
     }
@@ -205,7 +203,6 @@ function processText(rawInput) {
 
     for (let word of wordsArray) {
         if (word.length > 0) {
-            // TODO: Account for bad words (e.g., "hello . hello" or "wo,rd wo!rd wo.rd").
             new_note = {}
             new_note.startTime = timeElapsed
 
@@ -604,7 +601,6 @@ function visualizeNote(note) {
         // Append to most recent sequence.
         currentRow = rowsList[rowsList.length - 1]
 
-        // TODO: Map to musical notes.
         currentRow.innerText += " " + note.pitch
     }, note.startTime * 1000 + DRAW_TIME_OFFSET)
 }
