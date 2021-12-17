@@ -65,16 +65,11 @@
             a natural language processing concept that measures
             "how well a probability model predicts a sample." We incorporated this insight from our Markov model (see
             more below) to control the synthesis type and
-            whether or not an LFO is enabled. </li>
+            whether or not an LFO is enabled. Our design choice uses AM and FM synthesis as well as LFOs to make the
+            sound progressively more chaotic sounding as the perplexity value increases. </li>
     </ul>
     <p>Trial and error: letter diversity metric (which is self created).</p>
     <p>Choosing sample text options: </p>
-
-    <h3>
-        Visualization
-    </h3>
-
-    <p></p>
 
     <h3>
         Automated Composition
@@ -87,6 +82,17 @@
     </p>
 
     <h3>
+        Visualization
+    </h3>
+
+    <p>
+        Our visualization takes in the finalize series of notes from the text processing and automated composition and
+        generates a visual representation of the note sequence. A random set of CSS colors are selected, and each unique
+        note pitch is mapped to each of the selected colors. Then, the visualizer progressively creates the pattern,
+        taking into account the note pitch for the color and the note length for the amount of color added.
+    </p>
+
+    <h3>
         Future Improvements
     </h3>
 
@@ -96,11 +102,17 @@
         features from built in libraries, but ran into many issues with those as well.
     </p>
 
-    <h3>
-        Miscellaneous
-    </h3>
+    <h3>Miscellaneous</h3>
 
     <p>Why don't we explain everything? LOL</p>
+
+    <h3>Try It Out!</h3>
+
+    <p>
+        Select from three sample texts or input your own, and the program will generate a note series and visualization
+        for the text. You can choose from four different types of visualization patterns: radial, diagonal, horizontal,
+        and vertical.
+    </p>
 
 </body>
 
