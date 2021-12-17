@@ -147,7 +147,7 @@ function addIntroText(text) {
     newSequenceRow.classList.add("row")
     newSequenceRow.classList.add("intro-text")
     introText = document.createElement("b")
-    introText.innerText = "> Analyzing the following text: "
+    introText.innerText = "\n> Analyzing the following text: "
     newSequenceText = document.createElement("p")
     newSequenceText.innerText = text
     newSequenceRow.appendChild(introText)
@@ -275,7 +275,6 @@ function adjustPerplexity(output) {
             lfo = true;
         }
     }
-
     console.log("LFO: ", lfo);
     console.log("Mode: ", mode);
 }
