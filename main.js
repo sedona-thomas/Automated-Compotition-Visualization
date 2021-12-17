@@ -200,6 +200,9 @@ function processText(rawInput) {
         waveform = "sine"
     }
 
+    wordLengthStdDev = getWordLengthStdDev(wordsArray)
+    numberOfPartials = Math.floor(5 *wordLengthStdDev)
+
     for (let word of wordsArray) {
         if (word.length > 0) {
             // TODO: Account for bad words (e.g., "hello . hello" or "wo,rd wo!rd wo.rd").
@@ -452,6 +455,25 @@ function getLetterDiversity(wordList) {
 
     console.log("letter diversity score: ", letterDiversityScore)
     return letterDiversityScore
+}
+
+function getWordLengthStdDev(wordList) {
+    totalLetters = 0
+    for (let word of wordList) {
+        totalLetters += word.length
+    }
+
+    // Calculate standard deviation of word length.
+    averageWordLengthInInput = totalLetters/wordList.length
+    sumOfWordLengthDifferences = 0
+    
+    for (let word of wordList) {
+        difference = word.length - averageWordLengthInInput
+        sumOfWordLengthDifferences += Math.pow(difference, 2)
+    }
+
+    return Math.sqrt(sumOfWordLengthDifferences/wordList.length)
+    
 }
 
 // getNGramCounts(): gets unigram, bigram, and trigram counts for a note list
