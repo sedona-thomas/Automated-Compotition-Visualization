@@ -4,6 +4,7 @@
 <head>
   <meta charset="utf‐8">
   <title> Automated Composition Visualization </title>
+  <link href="./main.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
@@ -12,48 +13,56 @@
     <font size="6" color="black" face="TimesNewRoman">Automated Composition Visualization</font>
   </h2>
 
-  <canvas id="visualization" width="500" height="500" style="border:1px solid #000000;">
-    Your browser does not support the HTML canvas tag.
-  </canvas>
+  <div class="row">
 
-  <br></br>
-
-  <font size="3" color="black" face="TimesNewRoman">
-
-    <div class="row">
+    <font size="3" color="black" face="TimesNewRoman">
 
       <div class="column_a">
+
         <div id="left_column">
 
-        <p>To play a song and generate a visualization, input text and click submit.</p>
+          <canvas id="visualization" width="600" height="600" style="border:1px solid #000000;">
+            Your browser does not support the HTML canvas tag.
+          </canvas>
 
-        <label for="gradients">Choose a pattern:</label>
-
-        <select id="gradients">
-          <option value="radial">Radial</option>
-          <option value="diagonal">Diagonal</option>
-          <option value="horizontal">Horizontal</option>
-          <option value="vertical">Vertical</option>
-        </select>
-        <p></p>
+        </div>
 
       </div>
-    </div>
-    </div>
-    <div class="column_b">
 
-      <div id="right_column">
+      <div class="column_b">
 
-    <button id="play_example_1">Try Sample 1</button>
-    <button id="play_example_2">Try Sample 2</button>
-    <button id="play_example_3">Try Sample 3</button>
+        <div id="right_column">
 
-    <p>Input Text</p>
-    <input type="text" id="text">
-    <button id="submit_text">Submit</button>
-    <div id="sequence-rows"></div>
+          <p>To play a song and generate a visualization, input text and click submit.</p>
 
-  </font>
+          <label for="gradients">Choose a pattern:</label>
+
+          <select id="gradients">
+            <option value="radial">Radial</option>
+            <option value="diagonal">Diagonal</option>
+            <option value="horizontal">Horizontal</option>
+            <option value="vertical">Vertical</option>
+          </select>
+
+          <br></br>
+
+          <button id="play_example_1">Try Sample 1</button>
+          <button id="play_example_2">Try Sample 2</button>
+          <button id="play_example_3">Try Sample 3</button>
+
+          <p>Input Text</p>
+          <input type="text" id="text">
+          <button id="submit_text">Submit</button>
+
+          <div id="sequence-rows"></div>
+
+        </div>
+
+      </div>
+
+    </font>
+
+  </div>
 
 </body>
 

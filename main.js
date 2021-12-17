@@ -145,7 +145,7 @@ function addIntroText(text) {
     newSequenceRow.classList.add("row")
     newSequenceRow.classList.add("intro-text")
     introText = document.createElement("b")
-    introText.innerText = "> Analyzing the following text: "
+    introText.innerText = "\n> Analyzing the following text: "
     newSequenceText = document.createElement("p")
     newSequenceText.innerText = text
     newSequenceRow.appendChild(introText)
@@ -272,14 +272,13 @@ function adjustPerplexity(output) {
             lfo = true;
         }
     }
-
     console.log("LFO: ", lfo);
     console.log("Mode: ", mode);
 }
 
 // visualize(): visualizes series of notes as they play
 function visualize(notesList) {
-    size = 500;
+    size = 600;
     canvas = document.getElementById("visualization");
     canvasCtx = canvas.getContext("2d");
     getStates(notesList);
