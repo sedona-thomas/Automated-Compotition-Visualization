@@ -9,14 +9,14 @@
 <body>
 
     <h2 align="center">
-        <font size="6" color="black" face="TimesNewRoman">Automated Composition Visualization Blog Post</font>
+        Automated Composition Visualization Blog Post
     </h2>
 
     <p align="center">by Sedona Thomas and Carolyn Wang</p>
 
 
     <h3>
-        <font size="6" color="black" face="TimesNewRoman">Background</font>
+        Background
     </h3>
     <p>Writing, visual art, and computer music are all areas of art, which is to say, they are all intensely subjective.
         In this project, we wanted to explore the translations between these artistic mediums by creating a creative
@@ -24,7 +24,7 @@
         understandings and coding decisions, thus putting art forms that are normally separated in conversation with
         each other and giving the user something fun and open-ended to explore.</p>
     <h3>
-        <font size="6" color="black" face="TimesNewRoman">Text processing</font>
+        Text processing
     </h3>
     <p>Everything the computer produces is based on the initial text input from the user. We then analyze the following
         attributes to determine corresponding characteristics of sound and visuals produced: </p>
@@ -54,15 +54,33 @@
     <p>Choosing sample text options: </p>
 
     <h3>
-        <font size="6" color="black" face="TimesNewRoman">Visualization</font>
+        Visualization
     </h3>
 
-    <h3>
-        <font size="6" color="black" face="TimesNewRoman">Automated Composition</font>
-    </h3>
+    <p></p>
 
     <h3>
-        <font size="6" color="black" face="TimesNewRoman">Miscellaneous</font>
+        Automated Composition
+    </h3>
+
+    <p>
+        Our project uses a Markov model trained on Twinkle Twinkle Little Star to generate a tune derived from the notes
+        we generated during the text processing. This Markov chain calculates the probability that a given note will
+        be followed by every other note then randomly generates future notes, weighted by their probability.
+    </p>
+
+    <h3>
+        Future Improvements
+    </h3>
+
+    <p>
+        In the future, we hope to incorporate a feature for users to input a MIDI file to train the Markov chain, but we
+        ran into many browser issues when trying to import the necessary functions. We also hope to add more NLP
+        features from built in libraries, but ran into many issues with those as well.
+    </p>
+
+    <h3>
+        Miscellaneous
     </h3>
 
     <p></p>
