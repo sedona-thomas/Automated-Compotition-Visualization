@@ -76,7 +76,12 @@
             or not an LFO is enabled. Our design choice uses AM and FM synthesis as well as LFOs to make the sound
             progressively more chaotic sounding as the perplexity value increases. </li>
     </ul>
-    <p>Trial and error: letter diversity metric (which is self created).</p>
+    <p>The process of building these elements of text processing involved some trial and error for the less established
+        calculations. For example, we came up with the equation for "letter diversity score" on our own, which meant we
+        needed to examine how it actually played out among a variety of plausible inputs and what the most common values
+        were, to then determine the distribution of the characteristics that would thus be influenced. Although "letter
+        diversity" can be 0 at lowest and 0.5 at most, most of the values actually fall between 0.34 and 0.36, which we
+        split among sawtooth and sine waveforms.</p>
     <p>Choosing sample text options: </p>
 
     <h3>
